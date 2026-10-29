@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "osm-wicker-park",
+      "title": "OpenStreetMap · Wicker Park extract",
+      "creator": "OpenStreetMap contributors",
+      "copyright": "OpenStreetMap contributors",
+      "license": "ODbL 1.0",
+      "source": "https://www.openstreetmap.org/copyright",
+      "download": "https://api.openstreetmap.org/api/0.6/map?bbox=-87.683,41.9055,-87.671,41.914",
+      "acquired": "2026-10-28",
+      "files": [
+        "public/data/wicker-park.json"
+      ],
+      "modifications": "XML converted to filtered JSON; runtime simplification and procedural extrusion.",
+      "evidence": [
+        "licenses/DATA-PROVENANCE.md"
+      ],
+      "sha256": {
+        "public/data/wicker-park.json": "19080903112eaf38bffa4d376bd853037fbc0fddd069727549c102c72cf53965"
+      }
+    },
+    {
+      "id": "chicago-counts",
+      "title": "Average Daily Traffic Counts · Chicago",
+      "creator": "City of Chicago",
+      "copyright": "City of Chicago; copyright status unknown",
+      "license": "Public government data; portal terms apply. Standalone license/version unknown.",
+      "source": "https://data.cityofchicago.org/d/gc7y-n4xa",
+      "download": "https://data.cityofchicago.org/resource/gc7y-n4xa.json",
+      "acquired": "2026-10-28",
+      "files": [
+        "public/data/chicago-counts.json"
+      ],
+      "modifications": "Downloaded rows unchanged. Modeled peak-hour calibration in simulation.",
+      "evidence": [
+        "licenses/DATA-PROVENANCE.md"
+      ],
+      "sha256": {
+        "public/data/chicago-counts.json": "c4d06afac08a339a0dee4bf81daa6e1802cf35e4a1cb07133eed7abaa9d738f0"
+      }
+    },
+    {
+      "id": "threejs",
+      "title": "Three.js 0.185.1",
+      "creator": "three.js authors",
+      "copyright": "© 2010–2026 three.js authors",
+      "license": "MIT",
+      "source": "https://github.com/mrdoob/three.js/tree/r185",
+      "download": "https://registry.npmjs.org/three/-/three-0.185.1.tgz",
+      "acquired": "2026-10-28",
+      "files": [
+        "public/vendor/three.module.js",
+        "public/vendor/three.core.js",
+        "public/vendor/OrbitControls.js",
+        "public/vendor/BufferGeometryUtils.js"
+      ],
+      "modifications": "None; local import map used.",
+      "evidence": [
+        "licenses/three-MIT.txt",
+        "licenses/DATA-PROVENANCE.md"
+      ],
+      "sha256": {
+        "public/vendor/three.module.js": "bbf5ed13fe4373f5bd38b14ea8e62e9f157327da5638edc6d3863e08b167c9c7",
+        "public/vendor/three.core.js": "3718df126d69c125362a03340913204470d8c50238605150e57f808840fb7759",
+        "public/vendor/OrbitControls.js": "faabb4e8dfd9235ee4a9fd7c9a3d75f90f1689dbd4944bd6fd32117dacec5f93",
+        "public/vendor/BufferGeometryUtils.js": "5c552223a9309883743b80538d6e9cdb45e3227f30d3ec56fb2c39b46e78d595"
+      }
+    },
+    {
+      "id": "municipal-cover",
+      "title": "MUNICIPAL city intersection cover",
+      "creator": "OpenAI image generation, prompted by the project team",
+      "copyright": "Unknown; AI-generated image copyright status varies by jurisdiction",
+      "license": "OpenAI Terms of Use; standalone license/version unknown",
+      "source": "https://openai.com/policies/terms-of-use/",
+      "download": "No public source URL; original retained locally",
+      "acquired": "2026-10-28",
+      "files": [
+        "public/art/municipal-cover.webp",
+        "art/municipal-cover-original.png"
+      ],
+      "modifications": "Center-cropped and resized to 800 × 1200; WebP encoding.",
+      "evidence": [
+        "licenses/DATA-PROVENANCE.md"
+      ],
+      "sha256": {
+        "public/art/municipal-cover.webp": "80bb6b1c83771b339738895fa5dbe7a6b090d9212ff1a3b49e3a8ac9c5f0f229",
+        "art/municipal-cover-original.png": "a42b21236518ef8791ec88e1410eb4adcf18557ae5db6981c1f0cf3199cf540f"
+      }
+    }
+  ],
+  "historical": []
+}
