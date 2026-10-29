@@ -1,0 +1,3 @@
+# Credits verify the exact bytes of upstream distributions across platforms.
+/municipal/public/vendor/** -text
+/municipal/licenses/*.txt -text
