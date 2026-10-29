@@ -1,13 +1,14 @@
+import {approachRule} from './controls.js';
 import {route} from './data.js';
 export function rng(seed=418){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
 export function defaultPlan(n){return {control:n.control,mode:'fixed',greens:n.groups.map((g,i)=>i===0?18:30),minGreen:8,gap:3,yellow:3,allRed:2,offset:0};}
-export function validatePlan(p,n){if(!['signal','stop'].includes(p.control)||!['fixed','actuated'].includes(p.mode))return false;return p.greens.length===n.groups.length&&p.greens.every(x=>Number.isFinite(x)&&x>=8&&x<=90)&&p.minGreen>=5&&p.minGreen<=Math.min(...p.greens)&&p.gap>=1&&p.gap<=6&&p.yellow>=3&&p.allRed>=2&&p.offset>=0&&p.offset<=120;}
+export function validatePlan(p,n){if(!['signal','stop','priority'].includes(p.control)||!['fixed','actuated'].includes(p.mode))return false;return p.greens.length===n.groups.length&&p.greens.every(x=>Number.isFinite(x)&&x>=8&&x<=90)&&p.minGreen>=5&&p.minGreen<=Math.min(...p.greens)&&p.gap>=1&&p.gap<=6&&p.yellow>=3&&p.allRed>=2&&p.offset>=0&&p.offset<=120;}
 export class Controller{
  constructor(n,plan){this.node=n;this.plan=structuredClone(plan);this.clock=0;this.phase=0;this.stage='green';this.elapsed=0;this.gapElapsed=0;this.maxElapsed=0;this.lastReason='Fixed cycle';this.pending=null;this.releaseAt=0;this.owner=null;if(plan.mode==='fixed'&&plan.control==='signal')Object.assign(this,this.fixedState());}
  fixedState(){let total=this.plan.greens.reduce((a,b)=>a+b,0)+this.plan.greens.length*(this.plan.yellow+this.plan.allRed),t=((this.clock-this.plan.offset)%total+total)%total;for(let phase=0;phase<this.plan.greens.length;phase++){const g=this.plan.greens[phase];if(t<g)return {phase,stage:'green',elapsed:t};t-=g;if(t<this.plan.yellow)return {phase,stage:'yellow',elapsed:t};t-=this.plan.yellow;if(t<this.plan.allRed)return {phase,stage:'all-red',elapsed:t};t-=this.plan.allRed;}return {phase:0,stage:'green',elapsed:0};}
- apply(plan){this.pending=structuredClone(plan);if(this.plan.control==='stop'){this.stage='all-red';this.elapsed=0;}}
+ apply(plan){this.pending=structuredClone(plan);if(this.plan.control!=='signal'){this.stage='all-red';this.elapsed=0;}}
  step(dt,detected){
-  this.clock+=dt;if(this.plan.control==='stop'&&!this.pending)return;
+  this.detected=detected;this.clock+=dt;if(this.plan.control!=='signal'&&!this.pending)return;
   this.elapsed+=dt;
   if(this.stage==='green'){
    this.gapElapsed=detected[this.phase]?0:this.gapElapsed+dt;
@@ -22,7 +23,7 @@ export class Controller{
   }else if(this.stage==='yellow'&&this.elapsed>=this.plan.yellow){this.stage='all-red';this.elapsed=0;}
   else if(this.stage==='all-red'&&this.elapsed>=this.plan.allRed){if(this.pending){this.plan=this.pending;this.pending=null;this.phase=-1;if(this.plan.mode==='fixed'&&this.plan.control==='signal'){const scheduled=this.fixedState();Object.assign(this,scheduled);return;}}this.phase=(this.phase+1)%Math.max(1,this.node.groups.length);this.stage='green';this.elapsed=0;this.gapElapsed=0;this.maxElapsed=0;}
  }
- allows(edgeId){if(this.plan.control==='stop')return true;return this.stage==='green'&&this.node.groups[this.phase]?.edges.includes(edgeId);}
+ allows(edgeId){if(this.pending&&this.stage==='all-red')return false;if(this.plan.control!=='signal')return true;return this.stage==='green'&&this.node.groups[this.phase]?.edges.includes(edgeId);}
 }
 export class Simulation{
  constructor(world,plans=new Map(),opts={}){
@@ -30,7 +31,7 @@ export class Simulation{
   const observations=[...new Map(world.edges.filter(e=>e.observation).map(e=>[e.observation.segmentid,e.observation])).values()];
   const mean=observations.length?observations.reduce((s,o)=>s+(+o.vehiclecount),0)/observations.length:11000;
   // A modelled 8% peak-hour share, distributed over the playable boundary and local generators.
-  this.baseRate=Math.max(.55,Math.min(2.7,mean*.08/3600*5));
+  this.baseRate=Math.max(.55,Math.min(8,mean*.08/3600*5*Math.sqrt(Math.max(1,world.edges.length/131))));
  }
  choose(items,weight=()=>1){let sum=items.reduce((s,i)=>s+weight(i),0),t=this.random()*sum;for(const i of items){t-=weight(i);if(t<=0)return i;}return items.at(-1);}
  requestTrip(){
@@ -72,7 +73,8 @@ export class Simulation{
    let blocked=false;
    if(ctl&&remaining<45&&next){
     let allowed=ctl.allows(e.id);
-    if(ctl.plan.control==='stop')allowed=c.stopTime>=1.5&&this.time>=ctl.releaseAt;
+    const rule=approachRule(ctl,e.id);if(rule==='stop')allowed=allowed&&c.stopTime>=1.5&&this.time>=ctl.releaseAt;
+    if((rule==='stop'||rule==='yield')&&ctl.plan.control==='priority')allowed=allowed&&!this.cars.some(other=>{if(other===c)return false;const p=other.path[other.index];return (p.reverse?p.edge.a:p.edge.b)===end&&approachRule(ctl,p.edge.id)==='priority'&&p.edge.length-other.position<Math.max(24,other.speed*3.5);});
     if(ctl.owner!==null&&ctl.owner!==c.id&&this.time<ctl.releaseAt)allowed=false;
     const nextLane=this.laneFor(c,c.index+1),nextQueue=lanes.get(key(next,nextLane));
     if(nextQueue?.length&&nextQueue.at(-1).position<12)allowed=false;

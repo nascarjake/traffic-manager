@@ -13,7 +13,7 @@
       "files": [
         "public/data/wicker-park.json"
       ],
-      "modifications": "XML converted to JSON retaining drivable roads, buildings, mapped parks/green spaces and shop/amenity points; runtime graph simplification and procedural city rendering.",
+      "modifications": "XML converted to JSON retaining drivable roads, buildings, mapped parks/green spaces and shop/amenity points. Traffic signal/stop/yield tags retained on road nodes; runtime control mapping preserves approach direction and labels modeled defaults. Standalone control nodes are retained by the preparation script where present. Runtime graph simplification and original procedural city rendering.",
       "evidence": [
         "licenses/DATA-PROVENANCE.md"
       ],
