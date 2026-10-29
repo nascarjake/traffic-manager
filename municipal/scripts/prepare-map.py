@@ -4,7 +4,8 @@ nodes={int(n.attrib['id']):{'type':'node','id':int(n.attrib['id']),'lat':float(n
 ways=[]; used=set()
 for w in root.findall('way'):
  t={t.attrib['k']:t.attrib['v'] for t in w.findall('tag')}
- if 'building' not in t and t.get('highway') not in ['primary','secondary','tertiary','residential','unclassified','living_street','primary_link','secondary_link','tertiary_link']: continue
+ green=t.get('leisure') in ['park','garden','recreation_ground'] or t.get('landuse') in ['grass','forest','meadow','recreation_ground','village_green']
+ if 'building' not in t and not green and t.get('highway') not in ['primary','secondary','tertiary','residential','unclassified','living_street','primary_link','secondary_link','tertiary_link']: continue
  ids=[int(n.attrib['ref']) for n in w.findall('nd')]
  ways.append({'type':'way','id':int(w.attrib['id']),'nodes':ids,'tags':t});used.update(ids)
 selected=[n for i,n in nodes.items() if i in used or n['tags'].get('shop') or n['tags'].get('amenity')]

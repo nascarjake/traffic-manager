@@ -13,13 +13,21 @@
       "files": [
         "public/data/wicker-park.json"
       ],
-      "modifications": "XML converted to filtered JSON; runtime simplification and procedural extrusion.",
+      "modifications": "XML converted to JSON retaining drivable roads, buildings, mapped parks/green spaces and shop/amenity points; runtime graph simplification and procedural city rendering.",
       "evidence": [
         "licenses/DATA-PROVENANCE.md"
       ],
       "sha256": {
-        "public/data/wicker-park.json": "19080903112eaf38bffa4d376bd853037fbc0fddd069727549c102c72cf53965"
-      }
+        "public/data/wicker-park.json": "39699194a5512e921831cda91b40263951c2c3476b002cb8cec035c0cb5c3d5c"
+      },
+      "previousSha256": [
+        {
+          "date": "2026-10-28",
+          "file": "public/data/wicker-park.json",
+          "sha256": "19080903112eaf38bffa4d376bd853037fbc0fddd069727549c102c72cf53965",
+          "notes": "Original filtered extract, before retaining mapped green spaces."
+        }
+      ]
     },
     {
       "id": "chicago-counts",

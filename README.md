@@ -2,7 +2,9 @@
 
 A traffic engineering game for the neighborhoods you know. Take charge of a real-world map, tune the signals and reshape intersections to keep the evening commute moving.
 
-![MUNICIPAL cover art](municipal/public/art/municipal-cover.webp)
+![MUNICIPAL live 3D district](municipal-city-preview.png)
+
+Textured façades, varied roofs, street trees, detailed vehicles and mapped parks are generated directly from the district data. [Promotional cover art](municipal/public/art/municipal-cover.webp).
 
 ## Features
 

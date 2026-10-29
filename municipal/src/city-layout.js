@@ -1,0 +1,29 @@
+// Deterministic visual layout. These details never change traffic demand or routing.
+export function seededRandom(seed=1){let n=Number(seed)|0;return()=>{n|=0;n=n+0x6D2B79F5|0;let t=Math.imul(n^n>>>15,1|n);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+export function cleanPolygon(points){const out=[];for(const p of points)if(!out.length||Math.hypot(p.x-out.at(-1).x,p.z-out.at(-1).z)>.05)out.push({x:p.x,z:p.z});if(out.length>2&&Math.hypot(out[0].x-out.at(-1).x,out[0].z-out.at(-1).z)<.05)out.pop();return out;}
+export function polygonArea(points){return points.reduce((s,p,i)=>{const q=points[(i+1)%points.length];return s+p.x*q.z-q.x*p.z;},0)/2;}
+export function pointInPolygon(point,points){let inside=false;for(let i=0,j=points.length-1;i<points.length;j=i++){const a=points[i],b=points[j];if((a.z>point.z)!==(b.z>point.z)&&point.x<(b.x-a.x)*(point.z-a.z)/(b.z-a.z)+a.x)inside=!inside;}return inside;}
+export function segmentDistance(point,a,b){const dx=b.x-a.x,dz=b.z-a.z,den=dx*dx+dz*dz,t=den?Math.max(0,Math.min(1,((point.x-a.x)*dx+(point.z-a.z)*dz)/den)):0;return Math.hypot(point.x-a.x-dx*t,point.z-a.z-dz*t);}
+export function boundsOf(points){return {minX:Math.min(...points.map(p=>p.x)),maxX:Math.max(...points.map(p=>p.x)),minZ:Math.min(...points.map(p=>p.z)),maxZ:Math.max(...points.map(p=>p.z))};}
+export function buildingStyle(building){const random=seededRandom(building.id),points=cleanPolygon(building.points),area=Math.abs(polygonArea(points));let height=parseFloat(building.tags.height)||(+building.tags['building:levels']||2+Math.floor(random()*3))*3.4;height=Math.min(75,Math.max(4,height));
+ const kind=building.tags.building||'',commercial=!!(building.tags.shop||building.tags.amenity||/retail|commercial|office|supermarket/.test(kind));
+ const bounds=boundsOf(points),center={x:(bounds.minX+bounds.maxX)/2,z:(bounds.minZ+bounds.maxZ)/2};
+ const shape=building.tags['roof:shape'];const pitched=shape!=='flat'&&!commercial&&height<15&&area<260&&points.length<=5&&pointInPolygon(center,points)&&(shape==='hipped'||shape==='pyramidal'||shape==='gabled'||random()<.22);
+ const facade=commercial?4:Math.floor(random()*5),roof=pitched?2:Math.floor(random()*2);
+ return {points,area,height,commercial,pitched,facade,roof,bounds,center,roofHeight:pitched?Math.min(3.8,Math.sqrt(area)*.17):0,tint:.87+random()*.22};
+}
+export function roadWidth(edge){return(edge.forward&&edge.backward?edge.lanes*2:edge.lanes)*3.4+3+(edge.major?0:3.8);}
+export function sampleRoad(edge,t){t=Math.max(0,Math.min(edge.length,t));let i=1;while(i<edge.lengths.length-1&&edge.lengths[i]<t)i++;const a=edge.points[i-1],b=edge.points[i],d=Math.hypot(b.x-a.x,b.z-a.z)||1,f=(t-edge.lengths[i-1])/(edge.lengths[i]-edge.lengths[i-1]||1),dx=(b.x-a.x)/d,dz=(b.z-a.z)/d;return{x:a.x+(b.x-a.x)*f,z:a.z+(b.z-a.z)*f,dx,dz,angle:Math.atan2(dx,dz)};}
+export function makeBuildingIndex(buildings){const grid=new Map(),cell=32,items=buildings.map(b=>({...b,polygon:cleanPolygon(b.points),bounds:boundsOf(b.points)}));for(const b of items){for(let x=Math.floor(b.bounds.minX/cell);x<=Math.floor(b.bounds.maxX/cell);x++)for(let z=Math.floor(b.bounds.minZ/cell);z<=Math.floor(b.bounds.maxZ/cell);z++){const key=`${x},${z}`;if(!grid.has(key))grid.set(key,[]);grid.get(key).push(b);}}
+ return{clear(point,radius=2){const visited=new Set();for(let x=Math.floor((point.x-radius)/cell);x<=Math.floor((point.x+radius)/cell);x++)for(let z=Math.floor((point.z-radius)/cell);z<=Math.floor((point.z+radius)/cell);z++)for(const b of grid.get(`${x},${z}`)||[]){if(visited.has(b.id))continue;visited.add(b.id);if(pointInPolygon(point,b.polygon))return false;for(let i=0;i<b.polygon.length;i++)if(segmentDistance(point,b.polygon[i],b.polygon[(i+1)%b.polygon.length])<radius)return false;}return true;}};
+}
+export function streetScenery(world,index=makeBuildingIndex(world.buildings)){
+ const trees=[],parked=[],occupied=new Set();
+ const placeTree=(x,z,random,park=false)=>{const key=`${Math.floor(x/5)},${Math.floor(z/5)}`;if(occupied.has(key)||!index.clear({x,z},park?3:2))return;occupied.add(key);trees.push({x,z,radius:2.4+random()*1.7,height:6.8+random()*3.2,seed:Math.floor(random()*1e8),park});};
+ for(const e of world.edges){if(e.length<45)continue;const random=seededRandom(e.id+851),width=roadWidth(e);
+  for(let t=24+random()*12;t<e.length-22;t+=22+random()*8){const p=sampleRoad(e,t);for(const side of[-1,1]){const offset=width/2+2.2;placeTree(p.x-p.dz*side*offset,p.z+p.dx*side*offset,random);}}
+  if(!e.major&&e.length>75)for(let t=27+random()*12;t<e.length-24;t+=13+random()*15){if(random()<.3)continue;const p=sampleRoad(e,t),side=random()<.5?-1:1,offset=width/2-1.25,x=p.x-p.dz*side*offset,z=p.z+p.dx*side*offset;if(index.clear({x,z},1.3))parked.push({x,z,angle:p.angle+(side>0?0:Math.PI),color:Math.floor(random()*8),variant:Math.floor(random()*3)});}
+ }
+ for(const park of world.greenSpaces||[]){const random=seededRandom(park.id),points=cleanPolygon(park.points),bounds=boundsOf(points),area=Math.abs(polygonArea(points)),attempts=Math.min(1100,Math.ceil(area/35));for(let i=0;i<attempts;i++){const x=bounds.minX+random()*(bounds.maxX-bounds.minX),z=bounds.minZ+random()*(bounds.maxZ-bounds.minZ);if(!pointInPolygon({x,z},points))continue;let nearRoad=false;for(const e of world.edges){for(let j=1;j<e.points.length;j++)if(segmentDistance({x,z},e.points[j-1],e.points[j])<roadWidth(e)/2+3){nearRoad=true;break;}if(nearRoad)break;}if(!nearRoad&&random()<.62)placeTree(x,z,random,true);}}
+ return{trees,parked};
+}

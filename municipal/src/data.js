@@ -5,12 +5,13 @@ export const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 const normName=s=>(s||'').toUpperCase().replace(/^(NORTH|SOUTH|EAST|WEST|N|S|E|W) /,'').replace(/ (AVENUE|STREET|ROAD|BOULEVARD|AVE|ST|RD|BLVD)$/,'');
 export function buildWorld(raw,center=CENTER,counts=[]){
  const osmNodes=new Map(raw.elements.filter(e=>e.type==='node').map(e=>[e.id,{...e,...project(e.lat,e.lon,center)}]));
- const buildings=[],places=[],segments=[],adj=new Map();
+ const buildings=[],greenSpaces=[],places=[],segments=[],adj=new Map();
  const add=(id,s)=>{if(!adj.has(id))adj.set(id,[]);adj.get(id).push(s);};
  for(const e of raw.elements){
   if(e.type==='node'&&(e.tags?.shop||e.tags?.amenity))places.push({...e,...project(e.lat,e.lon,center)});
   if(e.type!=='way')continue;
   const pts=e.nodes.map(i=>osmNodes.get(i)).filter(Boolean);if(pts.length<2)continue;
+  if(pts.length>3&&(/^(park|garden|recreation_ground)$/.test(e.tags?.leisure||'')||/^(grass|forest|meadow|recreation_ground|village_green)$/.test(e.tags?.landuse||'')))greenSpaces.push({id:e.id,points:pts,tags:e.tags});
   if(e.tags?.building&&pts.length>3){const area=Math.abs(pts.reduce((s,p,i)=>{let q=pts[(i+1)%pts.length];return s+p.x*q.z-q.x*p.z},0))/2;if(area>18)buildings.push({id:e.id,points:pts,tags:e.tags,area,center:{x:pts.reduce((s,p)=>s+p.x,0)/pts.length,z:pts.reduce((s,p)=>s+p.z,0)/pts.length}});}
   if(!DRIVABLE.has(e.tags?.highway)||['private','no'].includes(e.tags.access)||e.tags.motor_vehicle==='no')continue;
   for(let i=1;i<pts.length;i++){
@@ -74,7 +75,7 @@ export function buildWorld(raw,center=CENTER,counts=[]){
  const outlets=[...graphNodes.values()].filter(n=>n.edges.length===1||Math.abs(n.x)>390||Math.abs(n.z)>340);
  const origins=buildings.map(b=>{let nearest=[...graphNodes.values()].reduce((a,n)=>!a||distance(b.center,n)<distance(b.center,a)?n:a,null);let commercial=b.tags.shop||b.tags.amenity||/retail|commercial|office/.test(b.tags.building);return {node:nearest?.id,kind:commercial?'work':'home',weight:Math.max(1,Math.min(10,b.area/200))};}).filter(b=>b.node);
  for(const p of places){let nearest=[...graphNodes.values()].reduce((a,n)=>!a||distance(p,n)<distance(p,a)?n:a,null);if(nearest)origins.push({node:nearest.id,kind:'work',weight:4});}
- return {nodes:graphNodes,edges:active,junctions,buildings,places,outlets,origins,center,raw,counts};
+ return {nodes:graphNodes,edges:active,junctions,buildings,greenSpaces,places,outlets,origins,center,raw,counts};
 }
 export function pointOnEdge(e,t,reverse=false,lane=0){
  t=Math.max(0,Math.min(e.length,t));let target=reverse?e.length-t:t;let i=1;while(i<e.lengths.length-1&&e.lengths[i]<target)i++;

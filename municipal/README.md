@@ -49,3 +49,9 @@ npm run build
 Tests cover phase safety, actuated detection and opposing-call timers, coordination offsets, safe plan transitions, one-way routing, real-map contraction, identical baseline scores, matched seeded demand after edits, finite vehicle states, accounting for unfinished demand, and clearing a stop junction without repeated stopping.
 
 `credits.json` is the canonical current/historical asset list. The in-game About screen reads it directly. License/provenance evidence is in `licenses/`; the credits check validates all data/vendor files and SHA-256 hashes. Keep historical entries when replacing an asset. Original procedural visuals need no external assets. Chicago's standalone license/version is unspecified in retrieved metadata; portal terms and the unresolved fact are retained in provenance rather than invented.
+
+## City rendering
+
+The city renderer generates repeating brick and limestone façades with framed windows, varied roof materials, parapets, rooftop equipment, chimneys and storefront awnings. Clustered, textured tree crowns and trunks line the streets and fill mapped park areas; instanced cars have separate paint, glass, roof, wheels, lights and bumpers. Concrete sidewalks, curbs and asphalt provide street-scale contrast. Repeated details use merged geometry or instanced meshes, and moving vehicle batches avoid stale frustum bounds. Scenery rebuilds when lane widths change.
+
+These visual details are deterministic artistic dressing, independent of the simulation. Park geometry and building footprints come from OSM; façade materials, roof forms without complete tags, tree placement and parked cars are approximations. All surface textures are created in code, with no external texture downloads.

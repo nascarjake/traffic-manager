@@ -2,86 +2,92 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/OrbitControls.js';
 import {mergeGeometries} from 'three/addons/BufferGeometryUtils.js';
 import {pointOnEdge,distance} from './data.js';
-const COLORS=[0xeee9d5,0xbaceb7,0xcfad67,0x76918b,0xe1d4ae,0x626f65,0xb97956,0xdddcc8];
+import {CityArt} from './city-art.js';
+import {roadWidth,sampleRoad} from './city-layout.js';
 export class WorldRenderer{
  constructor(host,labels,onSelect){
-  this.host=host;this.labels=labels;this.onSelect=onSelect;this.scene=new THREE.Scene();this.scene.background=new THREE.Color('#c2cdb9');this.scene.fog=new THREE.Fog('#c2cdb9',1500,3100);
+  this.host=host;this.labels=labels;this.onSelect=onSelect;this.scene=new THREE.Scene();this.scene.background=new THREE.Color('#d1cdb9');this.scene.fog=new THREE.Fog('#d1cdb9',1450,2800);
   this.camera=new THREE.PerspectiveCamera(34,1,1,5000);this.camera.position.set(540,670,670);
-  this.renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});this.renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.8));this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=THREE.PCFSoftShadowMap;this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.02;host.append(this.renderer.domElement);
+  this.renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});this.renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.8));this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=THREE.PCFShadowMap;this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.02;host.append(this.renderer.domElement);
   this.controls=new OrbitControls(this.camera,this.renderer.domElement);this.controls.target.set(0,0,0);this.controls.enableDamping=true;this.controls.dampingFactor=.09;this.controls.minDistance=130;this.controls.maxDistance=1900;this.controls.maxPolarAngle=Math.PI*.46;this.controls.minPolarAngle=.03;this.controls.enablePan=true;
-  this.scene.add(new THREE.HemisphereLight(0xf0f3df,0x788a6c,1.4));const sun=new THREE.DirectionalLight(0xffefd1,2.1);sun.position.set(-400,650,250);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-850;sun.shadow.camera.right=850;sun.shadow.camera.top=850;sun.shadow.camera.bottom=-850;sun.shadow.camera.near=1;sun.shadow.camera.far=1800;sun.shadow.bias=-.0007;sun.shadow.normalBias=.8;this.scene.add(sun);
-  const ground=new THREE.Mesh(new THREE.PlaneGeometry(4000,4000),new THREE.MeshStandardMaterial({color:0xb0c0a1,roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;this.scene.add(ground);
-  const grid=new THREE.GridHelper(2400,48,0xa5b79a,0xaec0a2);grid.position.y=-.1;grid.material.transparent=true;grid.material.opacity=.23;this.scene.add(grid);
+  this.scene.add(new THREE.HemisphereLight(0xe7eddb,0x81755f,1.5));const sun=new THREE.DirectionalLight(0xffe7bd,2.8);this.sun=sun;sun.position.set(-400,650,250);sun.castShadow=true;const shadowSize=this.renderer.capabilities.maxTextureSize>=4096&&window.innerWidth>900?4096:2048;sun.shadow.mapSize.set(shadowSize,shadowSize);sun.shadow.camera.left=-460;sun.shadow.camera.right=460;sun.shadow.camera.top=460;sun.shadow.camera.bottom=-460;sun.shadow.camera.near=1;sun.shadow.camera.far=1800;sun.shadow.bias=-.00015;sun.shadow.normalBias=.25;sun.shadow.radius=2;this.scene.add(sun,sun.target);
+  this.art=new CityArt(this.renderer);this.art.surfaces.ground.repeat.set(180,180);
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(4000,4000),new THREE.MeshStandardMaterial({color:0xe0dccb,map:this.art.surfaces.ground,roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;this.scene.add(ground);
+  const grid=new THREE.GridHelper(2400,48,0xa9a990,0xbdbba4);grid.position.y=-.1;grid.material.transparent=true;grid.material.opacity=.14;this.scene.add(grid);
   this.static=new THREE.Group();this.scene.add(this.static);this.roadGroup=new THREE.Group();this.scene.add(this.roadGroup);this.signalGroup=new THREE.Group();this.scene.add(this.signalGroup);
-  this.cars=new THREE.InstancedMesh(new THREE.BoxGeometry(1.85,1.4,4.4),new THREE.MeshStandardMaterial({roughness:.75}),1200);this.cars.castShadow=true;this.scene.add(this.cars);
-  this.roofs=new THREE.InstancedMesh(new THREE.BoxGeometry(1.5,.42,2.2),new THREE.MeshStandardMaterial({color:0x334741,roughness:.45}),1200);this.scene.add(this.roofs);
-  this.dummy=new THREE.Object3D();this.signals=[];this.streetLabels=[];this.markers=[];this.trafficLayer=true;this.showLabels=true;
+  this.vehicles=this.art.createVehicles(1200,true);this.scene.add(this.vehicles.group);
+  this.signalNodes=new Set();this.signals=[];this.streetLabels=[];this.markers=[];this.trafficLayer=true;this.showLabels=true;
   this.selection=new THREE.Mesh(new THREE.RingGeometry(17,18.1,64),new THREE.MeshBasicMaterial({color:0xf3c46b,side:THREE.DoubleSide}));this.selection.rotation.x=-Math.PI/2;this.selection.position.y=.75;this.scene.add(this.selection);
   this.selection2=new THREE.Mesh(new THREE.RingGeometry(22,22.35,64),new THREE.MeshBasicMaterial({color:0xf1cc81,transparent:true,opacity:.7,side:THREE.DoubleSide}));this.selection2.rotation.x=-Math.PI/2;this.selection2.position.y=.7;this.scene.add(this.selection2);
   this.resizeObserver=new ResizeObserver(()=>this.resize());this.resizeObserver.observe(host);this.resize();
   let down;host.addEventListener('pointerdown',e=>down={x:e.clientX,y:e.clientY});host.addEventListener('pointerup',e=>{if(!down||Math.hypot(e.clientX-down.x,e.clientY-down.y)>5||e.button!==0||!this.world)return;const r=host.getBoundingClientRect(),mouse=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1),ray=new THREE.Raycaster();ray.setFromCamera(mouse,this.camera);let p=new THREE.Vector3();if(ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,1,0),0),p)){let n=this.world.junctions.reduce((a,n)=>!a||distance(n,{x:p.x,z:p.z})<distance(a,{x:p.x,z:p.z})?n:a,null);if(n&&distance(n,{x:p.x,z:p.z})<55)this.onSelect(n);}});
  }
  resize(){const w=this.host.clientWidth,h=this.host.clientHeight;this.renderer.setSize(w,h);this.camera.aspect=w/h;this.camera.updateProjectionMatrix();}
- disposeGroup(group){for(const child of [...group.children]){child.geometry?.dispose();if(Array.isArray(child.material))child.material.forEach(m=>m.dispose());else child.material?.dispose();group.remove(child);}}
+ disposeGroup(group){const geometries=new Set(),materials=new Set();group.traverse(child=>{if(child.geometry)geometries.add(child.geometry);if(Array.isArray(child.material))child.material.forEach(m=>materials.add(m));else if(child.material)materials.add(child.material);if(child.isInstancedMesh)child.dispose();});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());group.clear();}
  load(world){
-  this.world=world;this.disposeGroup(this.static);this.disposeGroup(this.signalGroup);this.labels.innerHTML='';this.streetLabels=[];this.markers=[];this.signals=[];
-  const buildingGeos=[[],[],[]];let bindex=0;
-  for(const b of world.buildings){if(Math.abs(b.center.x)>630||Math.abs(b.center.z)>550)continue;
-   const shape=new THREE.Shape();b.points.forEach((p,i)=>i?shape.lineTo(p.x,-p.z):shape.moveTo(p.x,-p.z));
-   let h=parseFloat(b.tags.height)||(+b.tags['building:levels']||2+(b.id%3))*3.4;h=Math.min(75,Math.max(4,h));b.height=h;
-   try{const g=new THREE.ExtrudeGeometry(shape,{depth:h,bevelEnabled:false,steps:1});g.rotateX(-Math.PI/2);g.translate(0,.3,0);buildingGeos[bindex++%3].push(g);}catch{}
-  }
-  this.buildingMeshes=[];for(let i=0;i<3;i++)if(buildingGeos[i].length){const merged=mergeGeometries(buildingGeos[i]);const mesh=new THREE.Mesh(merged,new THREE.MeshStandardMaterial({color:[0xd8d7bd,0xc7c9ae,0xe3ddc5][i],roughness:1}));mesh.castShadow=true;mesh.receiveShadow=true;this.static.add(mesh);this.buildingMeshes.push(mesh);buildingGeos[i].forEach(g=>g.dispose());}
-  // Low, pale rooftop outlines make the footprint extrusion read like a scale model.
-  const roofPositions=[];for(const b of world.buildings)if(b.height)for(let i=1;i<b.points.length;i++){let a=b.points[i-1],p=b.points[i];roofPositions.push(a.x,b.height+.4,a.z,p.x,b.height+.4,p.z);}
-  const roofgeo=new THREE.BufferGeometry();roofgeo.setAttribute('position',new THREE.Float32BufferAttribute(roofPositions,3));this.outlines=new THREE.LineSegments(roofgeo,new THREE.LineBasicMaterial({color:0xe9e4cd,transparent:true,opacity:.55}));this.static.add(this.outlines);
-  // Procedural street trees, placed beside roads with a building-footprint clearance.
-  const trees=[];for(const e of world.edges)if(e.length>45)for(let t=28;t<e.length-15;t+=35){let p=pointOnEdge(e,t,false);let next=pointOnEdge(e,Math.min(t+1,e.length),false);let dx=next.x-p.x,dz=next.z-p.z;for(const side of [-1,1]){const x=p.x-dz*side*11,z=p.z+dx*side*11;if(!world.buildings.some(b=>distance(b.center,{x,z})<Math.sqrt(b.area)*.45+3))trees.push({x,z,s:2.5+(Math.abs(x*z)%18)/10});}}
-  const foliage=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshStandardMaterial({color:0x6f8c59,roughness:1}),trees.length);const trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(.35,.5,4,4),new THREE.MeshStandardMaterial({color:0x8c8970}),trees.length);
-  trees.forEach((p,i)=>{this.dummy.position.set(p.x,5.2,p.z);this.dummy.scale.set(p.s,p.s*1.2,p.s);this.dummy.rotation.set(0,i,0);this.dummy.updateMatrix();foliage.setMatrixAt(i,this.dummy.matrix);this.dummy.position.y=2;this.dummy.scale.set(1,1,1);this.dummy.updateMatrix();trunks.setMatrixAt(i,this.dummy.matrix)});foliage.castShadow=true;this.static.add(foliage,trunks);
+  this.world=world;this.signalNodes=new Set(world.junctions.filter(n=>n.control==='signal').map(n=>n.id));this.disposeGroup(this.static);this.disposeGroup(this.signalGroup);this.labels.innerHTML='';this.streetLabels=[];this.markers=[];this.signals=[];
+  const city=this.art.build(world);this.static.add(city.group);this.cityBuildings=city.buildings;this.cityBuildings.visible=this.buildingsVisible!==false;this.visualStats=city.stats;
   this.buildRoads();
   const byName=new Map();for(const e of [...world.edges].sort((a,b)=>b.length-a.length)){if(e.name==='Local street'||byName.has(e.name))continue;byName.set(e.name,e);if(byName.size>13)break;}
   for(const [name,e] of byName){const p=pointOnEdge(e,e.length*.45);const el=document.createElement('div');el.className='street-label';el.textContent=name.replace(/^North /,'N ').replace(/^West /,'W ').toUpperCase();this.labels.append(el);this.streetLabels.push({el,p:new THREE.Vector3(p.x,2,p.z)});}
   for(const [i,n] of world.junctions.entries()){
    const el=document.createElement('button');el.className='junction-marker';el.title=n.name;el.setAttribute('aria-label',`Inspect ${n.name}`);el.textContent=n.control==='signal'?'⫶':'·';el.classList.toggle('stop-marker',n.control==='stop');el.onclick=()=>this.onSelect(n);this.labels.append(el);this.markers.push({el,n,p:new THREE.Vector3(n.x,7,n.z)});
-   if(n.control==='signal')this.addSignal(n);
   }
   this.home();
  }
- addSignal(n){for(let i=0;i<Math.min(n.edges.length,4);i++){const e=n.edges[i],p=pointOnEdge(e,e.a===n.id?14:e.length-14);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,7,4),new THREE.MeshStandardMaterial({color:0x52614e}));pole.position.set(p.x,3.5,p.z);this.signalGroup.add(pole);const lamp=new THREE.Mesh(new THREE.BoxGeometry(1.2,2.7,1.2),new THREE.MeshStandardMaterial({color:0x354832}));lamp.position.set(p.x,7,p.z);this.signalGroup.add(lamp);const light=new THREE.Mesh(new THREE.SphereGeometry(.45,5,4),new THREE.MeshBasicMaterial({color:0x94b878}));light.position.set(p.x,7.3,p.z-.7);this.signalGroup.add(light);this.signals.push({light,node:n.id,edge:e.id});}}
+ addSignal(n){
+  this.signalNodes.add(n.id);const structures=[],bulbGeos=[],records=[];let vertexOffset=0;
+  const paintGeometry=(geometry,hex)=>{const c=new THREE.Color(hex),colors=[];for(let i=0;i<geometry.attributes.position.count;i++)colors.push(c.r,c.g,c.b);geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));structures.push(geometry);};
+  for(const e of n.edges){const incoming=e.a===n.id?e.backward:e.forward;if(!incoming)continue;const p=sampleRoad(e,e.a===n.id?15:e.length-15),sign=e.a===n.id?-1:1,dx=p.dx*sign,dz=p.dz*sign,right={x:-dz,z:dx},pole={x:p.x+right.x*(roadWidth(e)/2+.65),z:p.z+right.z*(roadWidth(e)/2+.65)},head={x:pole.x-right.x*3.1,z:pole.z-right.z*3.1},yaw=Math.atan2(-dx,-dz);
+   paintGeometry(new THREE.CylinderGeometry(.16,.23,7,6).translate(pole.x,3.5,pole.z),0x586258);
+   const arm=new THREE.CylinderGeometry(.13,.13,3.1,5);arm.rotateZ(Math.PI/2);arm.rotateY(-Math.atan2(right.z,right.x));arm.translate((pole.x+head.x)/2,6.9,(pole.z+head.z)/2);paintGeometry(arm,0x586258);
+   const housing=new THREE.BoxGeometry(.94,2.55,.48);housing.rotateY(yaw);housing.translate(head.x,5.85,head.z);paintGeometry(housing,0xd0a849);
+   const face=new THREE.BoxGeometry(.73,2.3,.08);face.rotateY(yaw);face.translate(head.x-dx*.27,5.85,head.z-dz*.27);paintGeometry(face,0x2d3a33);
+   const ranges=[];for(let lamp=0;lamp<3;lamp++){const g=new THREE.SphereGeometry(.25,6,4);g.translate(head.x-dx*.34,6.57-lamp*.73,head.z-dz*.34);const values=new Float32Array(g.attributes.position.count*3);g.setAttribute('color',new THREE.BufferAttribute(values,3));ranges.push([vertexOffset,g.attributes.position.count]);vertexOffset+=g.attributes.position.count;bulbGeos.push(g);}records.push({node:n.id,edge:e.id,ranges,state:null});
+  }
+  if(structures.length){const g=mergeGeometries(structures),mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.75}));mesh.castShadow=true;this.signalGroup.add(mesh);structures.forEach(g=>g.dispose());}
+  if(bulbGeos.length){const g=mergeGeometries(bulbGeos),mesh=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true}));this.signalGroup.add(mesh);for(const record of records)this.signals.push({...record,colors:g.attributes.color});bulbGeos.forEach(g=>g.dispose());}
+ }
  buildRoads(){
-  this.disposeGroup(this.roadGroup);const surf=[],pavement=[],mark=[],line=[];this.roadMeshes=[];
-  function strip(e,width,y){const pos=[];for(let i=1;i<e.points.length;i++){const a=e.points[i-1],b=e.points[i],d=distance(a,b),nx=-(b.z-a.z)/d*width/2,nz=(b.x-a.x)/d*width/2;pos.push(a.x+nx,y,a.z+nz,a.x-nx,y,a.z-nz,b.x+nx,y,b.z+nz,b.x+nx,y,b.z+nz,a.x-nx,y,a.z-nz,b.x-nx,y,b.z-nz);}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.computeVertexNormals();return g;}
-  for(const e of this.world.edges){
-   const width=(e.forward&&e.backward?e.lanes*2:e.lanes)*3.4+3;
-   pavement.push(strip(e,width+5,.04));const road=new THREE.Mesh(strip(e,width,.15),new THREE.MeshStandardMaterial({color:0x46534a,roughness:1,side:THREE.DoubleSide}));road.receiveShadow=true;this.roadGroup.add(road);this.roadMeshes.push({e,mesh:road});
-   for(let t=17;t<e.length-14;t+=10){const a=pointOnEdge(e,t),b=pointOnEdge(e,t+4);const dx=Math.sin(a.angle),dz=Math.cos(a.angle);if(e.forward&&e.backward){const shift=2.2;line.push(a.x+dz*shift,.23,a.z-dx*shift,b.x+dz*shift,.23,b.z-dx*shift);}
-    if(e.lanes>1){const a1=pointOnEdge(e,t,false,0),b1=pointOnEdge(e,t+4,false,0);mark.push(a1.x-dz*1.7,.23,a1.z+dx*1.7,b1.x-dz*1.7,.23,b1.z+dx*1.7);if(e.backward&&e.forward){const a2=pointOnEdge(e,t,true,0),b2=pointOnEdge(e,t+4,true,0);mark.push(a2.x+dz*1.7,.23,a2.z-dx*1.7,b2.x+dz*1.7,.23,b2.z-dx*1.7);}}
+  this.disposeGroup(this.roadGroup);const sidewalk=[],curbs=[],mark=[],line=[];this.roadMeshes=[];
+  function strip(e,width,y,offset=0,trim=0){const positions=[],uv=[];for(let i=1;i<e.points.length;i++){let start=e.lengths[i-1],end=e.lengths[i],lo=Math.max(start,trim),hi=Math.min(end,e.length-trim);if(hi<=lo)continue;const p=e.points[i-1],q=e.points[i],len=end-start,dx=(q.x-p.x)/len,dz=(q.z-p.z)/len;const a={x:p.x+dx*(lo-start),z:p.z+dz*(lo-start)},b={x:p.x+dx*(hi-start),z:p.z+dz*(hi-start)},left=offset-width/2,right=offset+width/2;
+   const points=[[a.x-dz*left,a.z+dx*left],[a.x-dz*right,a.z+dx*right],[b.x-dz*left,b.z+dx*left],[b.x-dz*left,b.z+dx*left],[a.x-dz*right,a.z+dx*right],[b.x-dz*right,b.z+dx*right]];for(const[x,z]of points){positions.push(x,y,z);uv.push(x/8,z/8);}}
+   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.computeVertexNormals();return g;
+  }
+  for(const e of this.world.edges){const width=roadWidth(e),trim=(this.world.nodes.get(e.a).edges.length>=3||this.world.nodes.get(e.b).edges.length>=3)?17:2;
+   for(const side of[-1,1]){sidewalk.push(strip(e,2.5,.23,side*(width/2+1.25),trim));curbs.push(strip(e,.24,.28,side*(width/2+.12),trim));}
+   const road=new THREE.Mesh(strip(e,width,.15),new THREE.MeshStandardMaterial({color:0x9a9f96,map:this.art.surfaces.asphalt,roughness:1,side:THREE.DoubleSide}));road.receiveShadow=true;this.roadGroup.add(road);this.roadMeshes.push({e,mesh:road});
+   for(let t=18;t<e.length-17;t+=9){const a=sampleRoad(e,t),b=sampleRoad(e,t+4);if(e.forward&&e.backward){for(const offset of[-.15,.15])line.push(a.x-a.dz*offset,.19,a.z+a.dx*offset,b.x-b.dz*offset,.19,b.z+b.dx*offset);}
+    if(e.lanes>1)for(const reverse of(e.forward&&e.backward?[false,true]:[!e.forward])){const a1=pointOnEdge(e,t,reverse,0),b1=pointOnEdge(e,t+4,reverse,0),dx=Math.sin(a1.angle),dz=Math.cos(a1.angle);mark.push(a1.x-dz*1.7,.2,a1.z+dx*1.7,b1.x-dz*1.7,.2,b1.z+dx*1.7);}
    }
   }
-  if(pavement.length){const mesh=new THREE.Mesh(mergeGeometries(pavement),new THREE.MeshStandardMaterial({color:0xc1c7ae,roughness:1,side:THREE.DoubleSide}));mesh.receiveShadow=true;this.roadGroup.add(mesh);pavement.forEach(g=>g.dispose());}
-  for(const [positions,color,opacity] of [[line,0xd9c990,.8],[mark,0xdfdebd,.65]]){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));this.roadGroup.add(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color,transparent:true,opacity})));}
-  // Zebra crossings on controlled junction approaches.
-  const zebras=[];for(const n of this.world.junctions)for(const e of n.edges){if(e.length<40)continue;const reverse=e.b===n.id;const p=pointOnEdge(e,reverse?e.length-14:14);let a=e.a===n.id?e.points[0]:e.points.at(-1),b=e.a===n.id?e.points[1]:e.points.at(-2),d=distance(a,b),dx=(b.x-a.x)/d,dz=(b.z-a.z)/d;for(let j=-3;j<=3;j++){const g=new THREE.PlaneGeometry(.9,3.7);g.rotateX(-Math.PI/2);g.rotateY(Math.atan2(dx,dz));g.translate(n.x+dx*14-dz*j*1.5,.28,n.z+dz*14+dx*j*1.5);zebras.push(g);}}
-  if(zebras.length){const m=new THREE.Mesh(mergeGeometries(zebras),new THREE.MeshBasicMaterial({color:0xd3d4b7,side:THREE.DoubleSide}));this.roadGroup.add(m);zebras.forEach(g=>g.dispose());}
+  for(const[geometries,material]of[[sidewalk,new THREE.MeshStandardMaterial({map:this.art.surfaces.sidewalk,roughness:1,side:THREE.DoubleSide})],[curbs,new THREE.MeshStandardMaterial({color:0xcac6b5,roughness:1,side:THREE.DoubleSide})]])if(geometries.length){const mesh=new THREE.Mesh(mergeGeometries(geometries),material);mesh.receiveShadow=true;this.roadGroup.add(mesh);geometries.forEach(g=>g.dispose());}
+  for(const[positions,paint]of[[line,0xd7b965],[mark,0xede8d5]]){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));this.roadGroup.add(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:paint,transparent:true,opacity:.85})));}
+  const zebras=[];for(const n of this.world.junctions)for(const e of n.edges){if(e.length<40)continue;const a=e.a===n.id?e.points[0]:e.points.at(-1),b=e.a===n.id?e.points[1]:e.points.at(-2),d=distance(a,b)||1,dx=(b.x-a.x)/d,dz=(b.z-a.z)/d,bars=Math.floor(roadWidth(e)/1.45/2);
+   for(let j=-bars;j<=bars;j++){const g=new THREE.PlaneGeometry(.85,3.6);g.rotateX(-Math.PI/2);g.rotateY(Math.atan2(dx,dz));g.translate(n.x+dx*14-dz*j*1.45,.21,n.z+dz*14+dx*j*1.45);zebras.push(g);}}
+  if(zebras.length){const mesh=new THREE.Mesh(mergeGeometries(zebras),new THREE.MeshBasicMaterial({color:0xe8e3d2,side:THREE.DoubleSide}));this.roadGroup.add(mesh);zebras.forEach(g=>g.dispose());}
+  if(this.scenery){this.disposeGroup(this.scenery);this.scene.remove(this.scenery);}const scenery=this.art.buildScenery(this.world);this.scenery=scenery.group;this.scene.add(this.scenery);Object.assign(this.visualStats,scenery.stats);this.host.dataset.visualStats=JSON.stringify(this.visualStats);
+  this.disposeGroup(this.signalGroup);this.signals=[];for(const id of this.signalNodes){const node=this.world.nodes.get(id);if(node)this.addSignal(node);}
  }
  select(n){this.selected=n;this.selection.position.set(n.x,.8,n.z);this.selection2.position.set(n.x,.8,n.z);for(const m of this.markers)m.el.classList.toggle('selected',m.n===n);}
- home(){this.controls.target.set(0,0,-45);this.camera.position.set(400,520,475);this.controls.update();}
- planView(plan){const target=this.controls.target.clone();this.camera.position.copy(target).add(plan?new THREE.Vector3(0,900,1):new THREE.Vector3(400,520,520));this.controls.update();}
+ home(){this.controls.target.set(0,0,-60);this.camera.position.set(245,345,300);this.controls.update();}
+ planView(plan){const target=this.controls.target.clone();this.camera.position.copy(target).add(plan?new THREE.Vector3(0,900,1):new THREE.Vector3(245,345,360));this.controls.update();}
  zoom(f){this.camera.position.sub(this.controls.target).multiplyScalar(f).add(this.controls.target);this.controls.update();}
  screen(v){const p=v.clone().project(this.camera);return {x:(p.x+1)*this.host.clientWidth/2,y:(1-p.y)*this.host.clientHeight/2,visible:p.z<1&&p.x>-1.2&&p.x<1.2&&p.y>-1.2&&p.y<1.2};}
  render(sim){
-  this.controls.update();const dummy=this.dummy;dummy.scale.set(1,1,1);let count=0;
-  for(const c of sim.cars){if(count>=1200)break;const p=c.path[c.index],v=pointOnEdge(p.edge,c.position,p.reverse,c.lane);dummy.position.set(v.x,1.15,v.z);dummy.rotation.set(0,v.angle,0);dummy.updateMatrix();this.cars.setMatrixAt(count,dummy.matrix);this.cars.setColorAt(count,new THREE.Color(COLORS[c.color]));dummy.position.y=2;dummy.updateMatrix();this.roofs.setMatrixAt(count,dummy.matrix);count++;}
-  this.cars.count=count;this.roofs.count=count;this.cars.instanceMatrix.needsUpdate=true;this.roofs.instanceMatrix.needsUpdate=true;if(this.cars.instanceColor)this.cars.instanceColor.needsUpdate=true;
-  if(this.trafficLayer&&this.frameCount%20===0){const densities=new Map();for(const c of sim.cars){let e=c.path[c.index].edge;if(c.speed<3)densities.set(e.id,(densities.get(e.id)||0)+1);}for(const {mesh,e} of this.roadMeshes){const q=densities.get(e.id)||0;mesh.material.color.setHex(q>6?0x95674d:q>2?0x827e50:0x465b4d);}}
+  this.controls.update();this.sun.target.position.copy(this.controls.target);this.sun.position.copy(this.controls.target).add(new THREE.Vector3(-380,650,260));let count=0;
+  for(const[id,controller]of sim.controllers)if(controller.plan.control==='signal'&&!this.signalNodes.has(id))this.addSignal(controller.node);
+  for(const car of sim.cars){if(count>=this.vehicles.capacity)break;const path=car.path[car.index],p=pointOnEdge(path.edge,car.position,path.reverse,car.lane);this.art.setVehicle(this.vehicles,count,p,car.color,car.id%9===0?1:car.id%13===0?2:0);count++;}this.art.finishVehicles(this.vehicles,count);
+  if(this.trafficLayer&&this.frameCount%20===0){const densities=new Map();for(const c of sim.cars){let e=c.path[c.index].edge;if(c.speed<3)densities.set(e.id,(densities.get(e.id)||0)+1);}for(const {mesh,e} of this.roadMeshes){const q=densities.get(e.id)||0;mesh.material.color.setHex(q>6?0xb08d71:q>2?0xada17c:0x9a9f96);}}
   this.frameCount=(this.frameCount||0)+1;
-  for(const {light,node,edge} of this.signals){let c=sim.controllers.get(node);light.material.color.setHex(c?.plan.control==='stop'?0xc69b66:c?.stage==='yellow'&&c.node.groups[c.phase]?.edges.includes(edge)?0xeec061:c?.allows(edge)?0xa9cc82:0xd87958);}
+  for(const signal of this.signals){const c=sim.controllers.get(signal.node),active=c?.node.groups[c.phase]?.edges.includes(signal.edge),state=c?.plan.control==='stop'?'stop':active&&c?.stage==='yellow'?'yellow':c?.allows(signal.edge)?'green':'red';if(state!==signal.state){signal.state=state;const values=state==='stop'?[0x3d4131,0xc99b45,0x2c3b2b]:[state==='red'?0xe36f45:0x4c3025,state==='yellow'?0xffcf66:0x52452a,state==='green'?0x9ac377:0x2d4030];signal.ranges.forEach(([start,count],lamp)=>{const color=new THREE.Color(values[lamp]);for(let i=start;i<start+count;i++)signal.colors.setXYZ(i,color.r,color.g,color.b);});signal.colors.needsUpdate=true;}}
   const zoom=this.camera.position.distanceTo(this.controls.target);for(const l of this.streetLabels){const p=this.screen(l.p);l.el.style.display=this.showLabels&&p.visible?'block':'none';l.el.style.left=p.x+'px';l.el.style.top=p.y+'px';}
   for(const m of this.markers){const p=this.screen(m.p);m.el.style.display=p.visible&&(m.n===this.selected||(distance(m.n,{x:this.controls.target.x,z:this.controls.target.z})<(m.n.control==='signal'?360:170)&&zoom<1250))?'grid':'none';m.el.style.left=p.x+'px';m.el.style.top=p.y+'px';if(this.frameCount%25===0)m.el.classList.toggle('queued',sim.queueAt(m.n.id)>3);}
   const tag=document.getElementById('selected-tag');if(this.selected){const p=this.screen(new THREE.Vector3(this.selected.x,0,this.selected.z));tag.style.display=p.visible?'block':'none';tag.style.left=(p.x+23)+'px';tag.style.top=(p.y+15)+'px';}
-  this.renderer.render(this.scene,this.camera);
+  const renderStart=performance.now();this.renderer.render(this.scene,this.camera);
+  if(this.frameCount%60===0){const now=performance.now();if(this.telemetryTime)this.host.dataset.fps=(60000/(now-this.telemetryTime)).toFixed(0);this.telemetryTime=now;this.host.dataset.renderMs=(now-renderStart).toFixed(1);this.host.dataset.drawCalls=String(this.renderer.info.render.calls);this.host.dataset.triangles=String(this.renderer.info.render.triangles);this.host.dataset.geometries=String(this.renderer.info.memory.geometries);}
+
  }
- setBuildings(on){this.buildingMeshes?.forEach(m=>m.visible=on);if(this.outlines)this.outlines.visible=on;}
- setTraffic(on){this.trafficLayer=on;if(!on)for(const {mesh} of this.roadMeshes)mesh.material.color.setHex(0x46534a);}
+ setBuildings(on){this.buildingsVisible=on;if(this.cityBuildings)this.cityBuildings.visible=on;}
+ setTraffic(on){this.trafficLayer=on;if(!on)for(const {mesh} of this.roadMeshes)mesh.material.color.setHex(0x9a9f96);}
 }
