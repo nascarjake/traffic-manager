@@ -97,6 +97,49 @@
         "public/art/municipal-cover.webp": "80bb6b1c83771b339738895fa5dbe7a6b090d9212ff1a3b49e3a8ac9c5f0f229",
         "art/municipal-cover-original.png": "a42b21236518ef8791ec88e1410eb4adcf18557ae5db6981c1f0cf3199cf540f"
       }
+    },
+    {
+      "id": "leaflet",
+      "title": "Leaflet 1.9.4",
+      "creator": "Vladimir (Volodymyr) Agafonkin and Leaflet contributors; CloudMade",
+      "copyright": "Copyright (c) 2010–2023, Volodymyr Agafonkin; Copyright (c) 2010–2011, CloudMade",
+      "license": "BSD 2-Clause",
+      "source": "https://github.com/Leaflet/Leaflet/tree/v1.9.4",
+      "download": "https://unpkg.com/leaflet@1.9.4/dist/",
+      "acquired": "2026-10-29",
+      "files": [
+        "public/vendor/leaflet.js",
+        "public/vendor/leaflet.css"
+      ],
+      "modifications": "Unmodified distributed JavaScript and CSS. The district picker uses an original CSS DivIcon; stock marker/layer-control image assets are not used. Basemap tiles are requested live from OpenStreetMap with visible attribution; no tiles are bundled.",
+      "evidence": [
+        "licenses/leaflet-BSD-2-Clause.txt",
+        "licenses/DATA-PROVENANCE.md"
+      ],
+      "sha256": {
+        "public/vendor/leaflet.js": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a",
+        "public/vendor/leaflet.css": "a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6"
+      }
+    },
+    {
+      "id": "osm-live-basemap",
+      "title": "OpenStreetMap Standard live district basemap",
+      "creator": "OpenStreetMap contributors; OpenStreetMap Carto by Andy Allan and contributors, based on original cartography by Steve Chilton and others",
+      "copyright": "OpenStreetMap contributors (data); OpenStreetMap Carto authors dedicated cartographic design to the public domain",
+      "license": "ODbL 1.0 (data); CC0 1.0 (OpenStreetMap Carto design); tile service usage policy applies",
+      "source": "https://www.openstreetmap.org/copyright",
+      "download": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "acquired": "2026-10-29",
+      "files": [],
+      "runtimeResources": [
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+      ],
+      "modifications": "Live viewport tiles are displayed unchanged by Leaflet with visible contributor attribution. No map tiles are bundled or prefetched. An original movable pin and control-boundary rectangle are overlaid. Exact deployed tile style revision and individual runtime tile hashes are unknown and vary with location and time.",
+      "evidence": [
+        "licenses/osm-carto-CC0.txt",
+        "licenses/DATA-PROVENANCE.md"
+      ],
+      "sha256": {}
     }
   ],
   "historical": []
