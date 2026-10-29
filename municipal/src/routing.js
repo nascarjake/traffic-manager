@@ -1,0 +1,17 @@
+import {roadSpeed,legalConnection} from './lanes.js';
+export function findRoute(world,start,end,initial=null,terminal=null){if(world.nodes.get(start)?.component!==world.nodes.get(end)?.component)return null;
+ const heap=[],push=item=>{heap.push(item);let i=heap.length-1;while(i){const parent=(i-1)>>1;if(heap[parent].cost<=item.cost)break;heap[i]=heap[parent];i=parent;}heap[i]=item;},pop=()=>{const first=heap[0],last=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let child=i*2+1;if(child+1<heap.length&&heap[child+1].cost<heap[child].cost)child++;if(heap[child].cost>=last.cost)break;heap[i]=heap[child];i=child;}heap[i]=last;}return first;};
+ const first=`${start}:start`,dist=new Map([[first,0]]),states=new Map([[first,{node:start,incoming:initial}]]),prev=new Map();let found;push({key:first,cost:0});
+ while(heap.length){const candidate=pop(),key=candidate.key;if(candidate.cost!==dist.get(key))continue;const current=states.get(key);if(current.node===end&&legalConnection(current.incoming,terminal,true)){found=key;break;}
+  for(const edge of world.nodes.get(current.node)?.edges||[]){const reverse=edge.b===current.node;if(reverse&&!edge.backward||!reverse&&!edge.forward)continue;const path={edge,reverse};if(!legalConnection(current.incoming,path,true))continue;const node=reverse?edge.a:edge.b,next=`${node}:${edge.id}:${Number(reverse)}`,cost=dist.get(key)+edge.length/roadSpeed(edge)+2;if(cost<(dist.get(next)??Infinity)){dist.set(next,cost);states.set(next,{node,incoming:path});prev.set(next,{key,path});push({key:next,cost});}}
+ }
+ if(found===undefined)return null;const path=[];while(found!==first){const p=prev.get(found);path.unshift(p.path);found=p.key;}return path;
+}
+export function routeAccess(world,from,to,cache=new Map()){
+ const byId=world.edgeById||new Map(world.edges.map(e=>[e.id,e])),source=from.edgeId===undefined?null:byId.get(from.edgeId),dest=to.edgeId===undefined?null:byId.get(to.edgeId),starts=source?[...(source.forward?[{node:source.b,path:{edge:source,reverse:false,startAt:from.position}}]:[]),...(source.backward?[{node:source.a,path:{edge:source,reverse:true,startAt:source.length-from.position}}]:[])]:[{node:from.node,path:null}],ends=dest?[...(dest.forward?[{node:dest.a,path:{edge:dest,reverse:false,endAt:to.position}}]:[]),...(dest.backward?[{node:dest.b,path:{edge:dest,reverse:true,endAt:dest.length-to.position}}]:[])]:[{node:to.node,path:null}];
+ let best=null,bestCost=Infinity;
+ function consider(path){if(!path?.length)return;const length=path.reduce((s,p)=>s+(p.endAt??p.edge.length)-(p.startAt??0),0),cost=path.reduce((s,p)=>s+((p.endAt??p.edge.length)-(p.startAt??0))/roadSpeed(p.edge),0);if(length<100||cost>=bestCost)return;best=path;bestCost=cost;}
+ if(source&&source===dest){if(source.forward&&to.position>from.position)consider([{edge:source,reverse:false,startAt:from.position,endAt:to.position}]);if(source.backward&&to.position<from.position)consider([{edge:source,reverse:true,startAt:source.length-from.position,endAt:source.length-to.position}]);}
+ for(const a of starts)for(const b of ends){const key=`${a.node}/${a.path?.edge.id??''}/${Number(a.path?.reverse)}>${b.node}/${b.path?.edge.id??''}/${Number(b.path?.reverse)}`;let middle=cache.get(key);if(middle===undefined){middle=findRoute(world,a.node,b.node,a.path,b.path);cache.set(key,middle);}if(!middle)continue;const path=[...(a.path?[{...a.path}]:[]),...middle,...(b.path?[{...b.path}]:[])];consider(path);}
+ return best;
+}

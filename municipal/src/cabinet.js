@@ -1,3 +1,4 @@
+import {eligibleLanes} from './lanes.js';
 import {approachRule} from './controls.js';
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function incomingApproaches(n){return n.edges.filter(e=>e.a===n.id?e.backward:e.forward).map(e=>{const p=e.a===n.id?e.points[1]:e.points.at(-2),angle=Math.atan2(p.x-n.x,n.z-p.z),bearing=['N','NE','E','SE','S','SW','W','NW'][(Math.round(angle*4/Math.PI)+8)%8];return{e,angle,bearing};}).sort((a,b)=>a.angle-b.angle);}
@@ -11,7 +12,7 @@ export function mountCabinet(host,n,onPedestrianCall){
 export function updateCabinet(n,c,sim){
  if(!c)return;const signal=c.plan.control==='signal',ped=c.pedestrianSignal();
  for(const {e,bearing}of incomingApproaches(n)){
-  const group=n.groups.findIndex(g=>g.edges.includes(e.id)),rule=approachRule(c,e.id),state=signal?c.movementSignal(e.id):rule,left=signal&&c.plan.protectedLefts[group]?c.movementSignal(e.id,'left'):'off';
+  const group=n.groups.findIndex(g=>g.edges.includes(e.id)),rule=approachRule(c,e.id),state=signal?c.movementSignal(e.id):rule,leftPermitted=eligibleLanes({edge:e,reverse:e.a===n.id},'left').length>0,left=signal&&leftPermitted&&c.plan.protectedLefts[group]?c.movementSignal(e.id,'left'):'off';
   for(const color of['red','yellow','green']){
    const lamp=document.getElementById(`lamp-${e.id}-${color}`),arrow=document.getElementById(`arrow-${e.id}-${color}`);
    lamp?.setAttribute('fill',signal&&state===color?lampColor[color]:'#263529');lamp?.setAttribute('class',signal&&state===color?'lit-lamp':'');
@@ -19,7 +20,7 @@ export function updateCabinet(n,c,sim){
   }
   const output=document.getElementById(`left-output-${e.id}`);output.dataset.state=left;output.setAttribute('aria-label',`${bearing} approach protected left: ${left}`);
   const source=c.plan.control!==n.control?'WORKS':n.approaches?.[e.id]?.source==='mapped'?'OSM':'MODEL';
-  document.getElementById(`approach-state-${e.id}`).textContent=`${state.toUpperCase()} / ↰ ${left==='off'?'YIELD':left.toUpperCase()} · ${source}`;
+  document.getElementById(`approach-state-${e.id}`).textContent=`${state.toUpperCase()} / ↰ ${!leftPermitted?'NONE':left==='off'?'YIELD':left.toUpperCase()} · ${source}`;
   const cars=sim.cars.filter(car=>{const p=car.path[car.index];return p.edge.id===e.id&&(p.reverse?p.edge.a:p.edge.b)===n.id&&e.length-car.position<65;}),peds=sim.pedestrians.filter(p=>p.node===n.id&&p.edge===e.id&&!p.walking);
   document.getElementById(`approach-queue-${e.id}`).textContent=cars.filter(c=>c.speed<2).length;
   document.getElementById(`walk-state-${e.id}`).textContent=`${ped==='walk'?'WALK':ped==='clearance'?'FINISH CROSSING':ped==='uncontrolled'?'GAP CROSSING':"DON'T WALK"} · ${peds.length} waiting`;

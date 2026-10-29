@@ -8,8 +8,10 @@ Textured façades, varied roofs, street trees, detailed vehicles and mapped park
 
 ## Features
 
-- Search OpenStreetMap for a neighborhood and turn its roads and building footprints into a 3D district.
-- Reprogram fixed-time and detector-actuated signals, with yellow and all-red clearance.
+- Search OpenStreetMap, move the district pin, and import up to a 2.7 km square of streets and buildings.
+- Program fixed-time/actuated signals, protected left arrows and pedestrian WALK/clearance stages in a live controller cabinet.
+- Inspect lane right-of-way on the map and follow individual cars along smooth turning paths to named destinations.
+- Feed traffic from highway/arterial gateways and local building activity, with visible arrival estimates and adjustable traffic load.
 - Convert signals and all-way stops, widen approaches, and add left-turn bays within a public works budget.
 - Compare your design against the original in matched, seeded traffic simulations.
 - Play a Chicago scenario informed by dated city traffic counts, or import compatible local counts from CSV.

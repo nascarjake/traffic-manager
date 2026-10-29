@@ -1,3 +1,7 @@
+import {taggedHeight,roadHeight} from './road-height.js';
+import {buildActivityLocations} from './access.js';
+import {findRoute} from './routing.js';
+import {roadDaily} from './lanes.js';
 import {mapControls} from './controls.js';
 import {clipSegment} from './district.js';
 const DRIVABLE=new Set(['motorway','trunk','primary','secondary','tertiary','residential','unclassified','living_street','motorway_link','trunk_link','primary_link','secondary_link','tertiary_link']);
@@ -26,14 +30,14 @@ export function buildWorld(raw,center=CENTER,counts=[]){
    const s={a:a.id,b:b.id,tags:e.tags,way:e.id};segments.push(s);add(a.id,s);add(b.id,s);
   }
  }
- const keep=new Set([...adj].filter(([id,ss])=>ss.length!==2||ss[0].tags.name!==ss[1].tags.name||ss[0].tags.oneway!==ss[1].tags.oneway).map(([id])=>id));
+ const keep=new Set([...adj].filter(([id,ss])=>ss.length!==2||ss[0].tags.name!==ss[1].tags.name||ss[0].tags.oneway!==ss[1].tags.oneway||ss[0].tags.layer!==ss[1].tags.layer||ss[0].tags.bridge!==ss[1].tags.bridge||ss[0].tags.tunnel!==ss[1].tags.tunnel).map(([id])=>id));
  const graphNodes=new Map([...keep].map(id=>[id,{...osmNodes.get(id),edges:[],groups:[],control:'stop'}]));
  const visited=new Set(),edges=[];
  for(const id of keep)for(const initial of adj.get(id)){
   if(visited.has(initial))continue;
-  let curr=id,s=initial,points=[osmNodes.get(id)],controls=[],travel=0,forward=true,backward=true;
+  let curr=id,s=initial,points=[osmNodes.get(id)],controls=[],travel=0,lastTags=initial.tags,lastAligned=initial.a===id,forward=true,backward=true;
   while(s&&!visited.has(s)){
-   visited.add(s);const next=s.a===curr?s.b:s.a;
+   visited.add(s);lastTags=s.tags;lastAligned=s.a===curr;const next=s.a===curr?s.b:s.a;
    if(s.tags.oneway==='yes'||s.tags.oneway==='1'){if(curr===s.a)backward=false;else forward=false;}
    if(s.tags.oneway==='-1'){if(curr===s.a)forward=false;else backward=false;}
    const p=osmNodes.get(curr),q=osmNodes.get(next);for(const [v,d]of[[p,travel],[q,travel+distance(p,q)]])if(['traffic_signals','stop','give_way'].includes(v.tags?.highway))controls.push({osmId:v.id,type:v.tags.highway,tags:v.tags,distance:d,forwardAlongEdge:s.a===curr});travel+=distance(p,q);
@@ -44,19 +48,20 @@ export function buildWorld(raw,center=CENTER,counts=[]){
   if(!graphNodes.has(curr)||curr===id)continue;
   let lengths=[0];for(let i=1;i<points.length;i++)lengths.push(lengths.at(-1)+distance(points[i-1],points[i]));
   if(lengths.at(-1)<3)continue;
-  const e={id:edges.length,a:id,b:curr,points,controls,lengths,length:lengths.at(-1),tags:initial.tags,name:initial.tags.name||'Local street',forward,backward,lanes:1,turnBay:false};
-  const tagLanes=+initial.tags.lanes||2;e.lanes=Math.min(2,Math.max(1,Math.floor(tagLanes/(forward&&backward?2:1))));
-  e.baseLanes=e.lanes;e.major=/primary|secondary|tertiary/.test(initial.tags.highway);
+  const e={laneApproaches:{forward:{tags:lastTags,osmForward:lastAligned},backward:{tags:initial.tags,osmForward:initial.a!==id}},osmAligned:initial.a===id,id:edges.length,a:id,b:curr,points,controls,lengths,length:lengths.at(-1),tags:initial.tags,name:initial.tags.name||'Local street',forward,backward,lanes:1,turnBay:false};
+  const tagLanes=+initial.tags.lanes||2;e.lanes=Math.min(forward&&backward?3:4,Math.max(1,Math.floor(tagLanes/(forward&&backward?2:1))));
+  e.baseLanes=e.lanes;e.major=/motorway|trunk|primary|secondary|tertiary/.test(initial.tags.highway);
   const rows=counts.filter(c=>normName(c.roadname)===normName(e.name)&&+c.vehiclecount>0);
   const mid=points[Math.floor(points.length/2)];rows.sort((a,b)=>distance(project(+a.midpointlat,+a.midpointlon,center),mid)-distance(project(+b.midpointlat,+b.midpointlon,center),mid));
   // Only a nearby, same-road count can calibrate a link. Preserve count date and direction.
   e.observation=rows.find(c=>distance(project(+c.midpointlat,+c.midpointlon,center),mid)<450)||null;
-  e.daily=e.observation?+e.observation.vehiclecount:e.major?12500:1600;
+  e.daily=e.observation?+e.observation.vehiclecount:roadDaily(e);
   edges.push(e);graphNodes.get(id).edges.push(e);graphNodes.get(curr).edges.push(e);
  }
- // Keep largest physical component, ignoring one-way restrictions only for component membership.
- let biggest=[];const seen=new Set();for(const id of graphNodes.keys()){if(seen.has(id))continue;let component=[],todo=[id];seen.add(id);while(todo.length){let n=todo.pop();component.push(n);for(const e of graphNodes.get(n).edges){let k=e.a===n?e.b:e.a;if(!seen.has(k)){seen.add(k);todo.push(k)}}}if(component.length>biggest.length)biggest=component;}
- const valid=new Set(biggest);for(const id of graphNodes.keys())if(!valid.has(id))graphNodes.delete(id);
+ // Retain playable street networks and through highways even when the nearest ramp is outside the district.
+ const components=[],seen=new Set();for(const id of graphNodes.keys()){if(seen.has(id))continue;const component=[],todo=[id];seen.add(id);while(todo.length){const n=todo.pop();component.push(n);for(const e of graphNodes.get(n).edges){const k=e.a===n?e.b:e.a;if(!seen.has(k)){seen.add(k);todo.push(k);}}}components.push(component);}
+ const largest=components.reduce((a,b)=>a.length>b.length?a:b,[]),valid=new Set();for(const [component,ids]of components.entries()){const usable=ids===largest||ids.some(id=>graphNodes.get(id).edges.length>=3||graphNodes.get(id).edges.some(e=>/motorway|trunk/.test(e.tags.highway)&&e.length>60));if(usable)for(const id of ids){valid.add(id);graphNodes.get(id).component=component;}}
+ for(const id of graphNodes.keys())if(!valid.has(id))graphNodes.delete(id);
  let active=edges.filter(e=>valid.has(e.a)&&valid.has(e.b));
  // OSM may model a single large junction as a small triangle of nodes.
  // Contract only short links between branching nodes into one controller area.
@@ -73,26 +78,21 @@ export function buildWorld(raw,center=CENTER,counts=[]){
    if(!group){group={angle,edges:[],name:e.name};n.groups.push(group);}group.edges.push(e.id);
   }
   n.groups.sort((a,b)=>{const ma=a.edges.some(id=>edges[id].major),mb=b.edges.some(id=>edges[id].major);return Number(mb)-Number(ma)});
+  n.y=n.edges.map(e=>taggedHeight(e.tags)).sort((a,b)=>Math.abs(b)-Math.abs(a))[0]||0;
   n.name=[...new Set(n.edges.map(e=>e.name))].slice(0,3).join(' / ');
  }
  mapControls(graphNodes,active);
  const junctions=[...graphNodes.values()].filter(n=>n.edges.length>=3);
  junctions.sort((a,b)=>distance(a,{x:0,z:0})-distance(b,{x:0,z:0}));
- let outlets=[...graphNodes.values()].filter(n=>n.boundary);if(outlets.length<2)outlets=[...graphNodes.values()].filter(n=>n.edges.length===1);
- const origins=buildings.map(b=>{let nearest=[...graphNodes.values()].reduce((a,n)=>!a||distance(b.center,n)<distance(b.center,a)?n:a,null);let commercial=b.tags.shop||b.tags.amenity||/retail|commercial|office/.test(b.tags.building);return {node:nearest?.id,kind:commercial?'work':'home',weight:Math.max(1,Math.min(10,b.area/200))};}).filter(b=>b.node);
- for(const p of places){let nearest=[...graphNodes.values()].reduce((a,n)=>!a||distance(p,n)<distance(p,a)?n:a,null);if(nearest)origins.push({node:nearest.id,kind:'work',weight:4});}
- return {bounds,nodes:graphNodes,edges:active,junctions,buildings,greenSpaces,places,outlets,origins,center,raw,counts};
+ let outlets=[...graphNodes.values()].filter(n=>n.boundary);if(outlets.length<2&&!raw.bounds)outlets=[...graphNodes.values()].filter(n=>n.edges.length===1);
+ for(const e of active)e.component=graphNodes.get(e.a).component;
+ const origins=buildActivityLocations(buildings,places,active);
+ return {edgeById:new Map(active.map(e=>[e.id,e])),bounds,nodes:graphNodes,edges:active,junctions,buildings,greenSpaces,places,outlets,origins,center,raw,counts};
 }
 export function pointOnEdge(e,t,reverse=false,lane=0){
  t=Math.max(0,Math.min(e.length,t));let target=reverse?e.length-t:t;let i=1;while(i<e.lengths.length-1&&e.lengths[i]<target)i++;
  let a=e.points[i-1],b=e.points[i],d=e.lengths[i]-e.lengths[i-1],f=d?(target-e.lengths[i-1])/d:0,dx=(b.x-a.x)/d,dz=(b.z-a.z)/d;
  if(reverse){dx=-dx;dz=-dz;}const shift=(e.forward&&e.backward?2.2:-(e.lanes-1)*1.7)+(lane*3.4);
- return {x:a.x+(b.x-a.x)*f-dz*shift,z:a.z+(b.z-a.z)*f+dx*shift,angle:Math.atan2(dx,dz)};
+ return {y:roadHeight(e,target),x:a.x+(b.x-a.x)*f-dz*shift,z:a.z+(b.z-a.z)*f+dx*shift,angle:Math.atan2(dx,dz)};
 }
-export function route(world,start,end){
- if(start===end)return null;let dist=new Map([[start,0]]),prev=new Map(),todo=new Set([start]);
- while(todo.size){let id=[...todo].reduce((a,b)=>dist.get(a)<dist.get(b)?a:b);todo.delete(id);if(id===end)break;
- for(const e of world.nodes.get(id)?.edges||[]){let reverse=e.b===id;if(reverse&&!e.backward||!reverse&&!e.forward)continue;let next=reverse?e.a:e.b,cost=dist.get(id)+e.length/(e.major?12:8);if(cost<(dist.get(next)??Infinity)){dist.set(next,cost);prev.set(next,{id,e,reverse});todo.add(next);}}
- }
- if(!prev.has(end))return null;let result=[],id=end;while(id!==start){let p=prev.get(id);if(!p)return null;result.unshift({edge:p.e,reverse:p.reverse});id=p.id;}return result;
-}
+export function route(world,start,end){if(start===end)return null;return findRoute(world,start,end);}
