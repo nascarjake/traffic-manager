@@ -99,7 +99,7 @@ export class Simulation{
   }
   this.pendingTrips=waiting;
   // Reserve both lanes during a merge; vehicles behind see the same physical obstacle.
-  for(const c of this.cars){if(c.turn)continue;const p=c.path[c.index],ideal=this.laneFor(c);if(!c.laneChange&&ideal!==c.lane&&c.position>23){const target=c.lane+Math.sign(ideal-c.lane),neighbors=lanes.get(key(p,target))||[],safe=neighbors.every(other=>other===c||Math.abs(other._stepPosition-c.position)>Math.max(10,other._stepPosition<c.position?other.speed*1.6:c.speed*1.2));if(safe){c.laneChange={from:c.lane,to:target,elapsed:0,duration:2.1};put(c,target);}}
+  for(const c of this.cars){if(c.turn)continue;const p=c.path[c.index],ideal=this.laneFor(c);if(!c.laneChange&&ideal!==c.lane&&!eligibleLanes(p,movementForPaths(p,c.path[c.index+1])).includes(c.lane)&&c.position>23){const target=c.lane+Math.sign(ideal-c.lane),neighbors=lanes.get(key(p,target))||[],safe=neighbors.every(other=>other===c||Math.abs(other._stepPosition-c.position)>Math.max(10,other._stepPosition<c.position?other.speed*1.6:c.speed*1.2));if(safe){c.laneChange={from:c.lane,to:target,elapsed:0,duration:2.1};put(c,target);}}
    if(c.laneChange){c.laneChange.elapsed+=dt;if(c.laneChange.elapsed>=c.laneChange.duration){c.lane=c.laneChange.to;c.laneChange=null;}}
   }
   for(const q of lanes.values())q.sort((a,b)=>b._stepPosition-a._stepPosition);
@@ -114,7 +114,7 @@ export class Simulation{
   for(const [laneKey,queue]of lanes)for(let j=0;j<queue.length;j++){
    const c=queue[j];if(processed.has(c.id)||laneKey!==key(c.path[c.index],c.lane))continue;processed.add(c.id);const p=c.path[c.index],e=p.edge,end=p.reverse?e.a:e.b,next=c.path[c.index+1],ctl=this.controllers.get(end),remaining=e.length-c.position,move=c.turn?.movement||movementForPaths(p,next),leader=j?queue[j-1]:null;
    let limit=roadSpeed(e)*(c.driver||1),gap=leader?leader._stepPosition-c._stepPosition-((leader.vehicleLength||4.5)+(c.vehicleLength||4.5))/2:1e6,leaderSpeed=leader?leader._stepSpeed:limit,blocked=false;
-   if(c.turn||next&&remaining<45&&move!=='through')limit=Math.min(limit,move==='right'?5.5:7);
+   if((c.turn||next&&remaining<45)&&move!=='through')limit=Math.min(limit,move==='right'?5.5:7);
    if(p.endAt!==undefined&&c.index===c.path.length-1&&p.endAt<e.length-1)limit=Math.min(limit,Math.max(2.5,Math.sqrt(Math.max(0,p.endAt-c.position)*3)));
    if(!c.turn&&remaining<55&&(next||p.endAt===undefined||p.endAt>=e.length-1)){
     let allowed=ctl?ctl.allows(e.id,move):true;if(this.activePedestrianNodes.has(end)||c.laneChange||!eligibleLanes(p,move).includes(c.lane))allowed=false;
