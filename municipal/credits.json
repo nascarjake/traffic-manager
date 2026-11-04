@@ -3,7 +3,7 @@
   "entries": [
     {
       "id": "osm-wicker-park",
-      "title": "OpenStreetMap · Wicker Park extract",
+      "title": "OpenStreetMap \u00b7 Wicker Park extract",
       "creator": "OpenStreetMap contributors",
       "copyright": "OpenStreetMap contributors",
       "license": "ODbL 1.0",
@@ -31,7 +31,7 @@
     },
     {
       "id": "chicago-counts",
-      "title": "Average Daily Traffic Counts · Chicago",
+      "title": "Average Daily Traffic Counts \u00b7 Chicago",
       "creator": "City of Chicago",
       "copyright": "City of Chicago; copyright status unknown",
       "license": "Public government data; portal terms apply. Standalone license/version unknown.",
@@ -53,7 +53,7 @@
       "id": "threejs",
       "title": "Three.js 0.185.1",
       "creator": "three.js authors",
-      "copyright": "© 2010–2026 three.js authors",
+      "copyright": "\u00a9 2010\u20132026 three.js authors",
       "license": "MIT",
       "source": "https://github.com/mrdoob/three.js/tree/r185",
       "download": "https://registry.npmjs.org/three/-/three-0.185.1.tgz",
@@ -89,7 +89,7 @@
         "public/art/municipal-cover.webp",
         "art/municipal-cover-original.png"
       ],
-      "modifications": "Center-cropped and resized to 800 × 1200; WebP encoding.",
+      "modifications": "Center-cropped and resized to 800 \u00d7 1200; WebP encoding.",
       "evidence": [
         "licenses/DATA-PROVENANCE.md"
       ],
@@ -102,7 +102,7 @@
       "id": "leaflet",
       "title": "Leaflet 1.9.4",
       "creator": "Vladimir (Volodymyr) Agafonkin and Leaflet contributors; CloudMade",
-      "copyright": "Copyright (c) 2010–2023, Volodymyr Agafonkin; Copyright (c) 2010–2011, CloudMade",
+      "copyright": "Copyright (c) 2010\u20132023, Volodymyr Agafonkin; Copyright (c) 2010\u20132011, CloudMade",
       "license": "BSD 2-Clause",
       "source": "https://github.com/Leaflet/Leaflet/tree/v1.9.4",
       "download": "https://unpkg.com/leaflet@1.9.4/dist/",
@@ -159,6 +159,28 @@
         "licenses/DATA-PROVENANCE.md"
       ],
       "sha256": {}
+    },
+    {
+      "id": "ambientcg-metal032",
+      "title": "Metal 032 \u00b7 cabinet enclosure surface",
+      "creator": "Lennart Demes / ambientCG",
+      "copyright": "Lennart Demes / ambientCG; dedicated under CC0",
+      "license": "Creative Commons CC0 1.0 Universal",
+      "source": "https://ambientcg.com/view?id=Metal032",
+      "download": "https://ambientcg.com/get?file=Metal032_1K-JPG.zip",
+      "acquired": "2026-11-04",
+      "files": [
+        "public/art/cabinet-metal032.jpg"
+      ],
+      "modifications": "Unmodified Metal032_1K-JPG_Color.jpg, renamed for the game. Used as a CSS metal surface with original gradients, lighting, screws, rails, hinges and hardware illustration. No third-party cabinet model or manufacturer image is bundled.",
+      "evidence": [
+        "licenses/ambientcg-license.txt",
+        "licenses/ambientcg-metal032-source.txt",
+        "licenses/DATA-PROVENANCE.md"
+      ],
+      "sha256": {
+        "public/art/cabinet-metal032.jpg": "49493d6ade78ccbbbd270c6a15e4b4c9b1a097e66ddf28a1073de3e85712d9af"
+      }
     }
   ],
   "historical": []
