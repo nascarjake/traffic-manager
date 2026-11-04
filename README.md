@@ -8,6 +8,8 @@ Textured façades, varied roofs, street trees, detailed vehicles and mapped park
 
 ## Features
 
+- Start directly in Watch view; click an intersection to open its cabinet.
+- With browser permission, load a district centered on a fresh location fix each visit.
 - Search OpenStreetMap, move the district pin, and import up to a 2.7 km square of streets and buildings.
 - Program fixed-time/actuated signals, protected left arrows and pedestrian WALK/clearance stages in a live controller cabinet.
 - See moving, turning and waiting cars through a distance-scaled traffic lens, with live lane permission arrows and a per-approach movement board.

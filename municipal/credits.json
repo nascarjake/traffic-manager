@@ -140,6 +140,25 @@
         "licenses/DATA-PROVENANCE.md"
       ],
       "sha256": {}
+    },
+    {
+      "id": "osm-runtime-geometry",
+      "title": "OpenStreetMap runtime district geometry",
+      "creator": "OpenStreetMap contributors",
+      "copyright": "OpenStreetMap contributors",
+      "license": "ODbL 1.0",
+      "source": "https://www.openstreetmap.org/copyright",
+      "download": "https://api.openstreetmap.org/api/0.6/map.json?bbox={west},{south},{east},{north}",
+      "acquired": "2026-11-03 (integration; individual extracts acquired at runtime)",
+      "files": [],
+      "runtimeResources": [
+        "https://api.openstreetmap.org/api/0.6/map.json?bbox={west},{south},{east},{north}"
+      ],
+      "modifications": "Bounded tiles are merged by original OSM ID, clipped to the requested district and transformed into a simplified road graph and original procedural city geometry. Optional browser geolocation centers a 1.8 km district on a fresh fix at startup; manual district selection remains available. Live colors, signals, vehicle demand and traffic behavior are modeled. Individual runtime extract hashes and map revision vary and are unknown; no additional extract is bundled.",
+      "evidence": [
+        "licenses/DATA-PROVENANCE.md"
+      ],
+      "sha256": {}
     }
   ],
   "historical": []
