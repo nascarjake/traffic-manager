@@ -1,6 +1,6 @@
 # MUNICIPAL — Traffic Control Simulator
 
-A playable browser-based WebGL traffic game with a late-1990s municipal workstation interface. JavaScript modules and locally bundled Three.js; no build dependencies, credentials, cloud account, or npm install required.
+A playable browser-based WebGL traffic game with a late-1990s municipal workstation interface. JavaScript modules and locally bundled Three.js; no runtime services or credentials required. A pinned esbuild development dependency produces the static release.
 
 ## Run
 
@@ -8,10 +8,11 @@ Node 20+ and Python 3 are sufficient:
 
 ```sh
 cd municipal
+npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:5173. `npm run build` creates a self-contained static `dist/` for any static host. Internet is needed only for finding/importing additional districts and opening source links; the bundled Wicker Park scene and simulation work without external network requests.
+Open http://127.0.0.1:5173. `npm run build` bundles, tree-shakes and minifies the game into content-hashed ESM chunks in a self-contained static `dist/` for any static host. Internet is needed only for finding/importing additional districts and opening source links; the bundled Wicker Park scene and simulation work without external network requests.
 
 ## Play
 
@@ -83,3 +84,13 @@ The readout separates cars waiting on the road from requests still at entry, cou
 Before / After on the Traffic bench snapshots the selected wave, world geometry, other junction plans and current timing draft. Two isolated simulations use the same seed, routes, drivers, empty start and clock. The selected junction uses its original imported control/default modeled plan captured at district load for Before; After uses the captured draft. Current lanes are held constant to isolate control/timing changes. Neither run changes live traffic, saved edits, queues or playback. Both run with 0.1-second steps, no ambient demand or pedestrians, to completion or 180 seconds. Work yields periodically to keep the UI responsive.
 
 The side-by-side report shows full-wave clearance (explicitly Not cleared at timeout), peak stopped road queue, mean queue including pending entries, queue remaining and completed trips. Queue history at matched 30-second intervals is available under Conditions; cleared waves remain at zero afterward. Original signal timings are modeled defaults, not measured municipal programs. Results are captured snapshots and must be rerun after further edits. Hide results returns the compact bench. This is separate from the exploratory live replay comparison and requires no previous run.
+
+## Web performance (v0.10)
+
+The release uses three initial JS bundles rather than a 34-module dependency chain; esbuild preserves the shared early-location singleton across entry points and retains legal comments. Three.js source/license evidence remains in the repository while the browser downloads the minified derivation. Leaflet JavaScript and CSS load only when opening the district picker. Run `npm ci` before building; CI uses the pinned lockfile.
+
+Roads are batched into ordinary/bridge meshes with per-edge vertex-color ranges so congestion colors remain live. Parked cars retain their modeled bodies, wheels, glazing and van geometry in three batches per scenery cell. Vehicle, foliage and bark prototypes are shared across cells and district rebuilds. Building trims are assembled directly into buffers; bounded colors/normals are packed, preserving world positions, UV precision and HDR vertex colors. Distant trees use lighter geometry with the same instance transforms and colors. Nearby trees retain full detail. Building selection work runs after meaningful camera movement, with incremental detailed chunks.
+
+The shadow map is 2048² rather than 4096². It updates for simulation steps, camera movement, new detail/scenery and road works; repeated identical frames reuse it. Dynamic buffers upload only active entries. Hidden tabs suspend simulation/render work without changing the user's pause preference. Closed inspectors skip costly live DOM rebuilds. Matched tests snapshot the simulation graph and origins, omitting raw maps, buildings and scenery.
+
+`node scripts/bench-render.mjs` measures deterministic CPU geometry construction, resource counts and retained typed arrays without a GPU or canvas texture generation. Results are in `benchmarks/geometry.json`; `benchmarks/javascript.json` compares source-module bytes with bundle bytes, including gzip estimates. These are not GPU VRAM or cold-network timing claims. In-browser `#world` counters report rendering submission time (CPU, not GPU elapsed time), calls, triangles, geometries, typed geometry bytes, textures and shadow size. See `benchmarks/REPORT.md` for measurement limits.

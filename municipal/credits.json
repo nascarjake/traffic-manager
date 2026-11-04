@@ -64,7 +64,7 @@
         "public/vendor/OrbitControls.js",
         "public/vendor/BufferGeometryUtils.js"
       ],
-      "modifications": "None; local import map used.",
+      "modifications": "None; local import map used. Production build derives minified, tree-shaken ESM chunks with esbuild; original vendor sources and their hashes remain unchanged in the repository. Full MIT license and legal comments are retained.",
       "evidence": [
         "licenses/three-MIT.txt",
         "licenses/DATA-PROVENANCE.md"
@@ -180,6 +180,27 @@
       ],
       "sha256": {
         "public/art/cabinet-metal032.jpg": "49493d6ade78ccbbbd270c6a15e4b4c9b1a097e66ddf28a1073de3e85712d9af"
+      }
+    },
+    {
+      "id": "esbuild-build-tool",
+      "title": "esbuild 0.28.2 \u00b7 build tool",
+      "creator": "Evan Wallace and esbuild contributors",
+      "copyright": "Copyright (c) 2020 Evan Wallace",
+      "license": "MIT",
+      "source": "https://github.com/evanw/esbuild/tree/v0.28.2",
+      "download": "https://registry.npmjs.org/esbuild/-/esbuild-0.28.2.tgz",
+      "acquired": "2026-11-04",
+      "files": [
+        "licenses/esbuild-MIT.txt"
+      ],
+      "modifications": "Build-time dependency only; no esbuild runtime is shipped. Bundles, tree-shakes and minifies original game modules and the retained unmodified Three.js vendor sources. Leaflet remains an unmodified on-demand module. Legal comments and all runtime licenses are retained.",
+      "evidence": [
+        "licenses/esbuild-MIT.txt",
+        "licenses/DATA-PROVENANCE.md"
+      ],
+      "sha256": {
+        "licenses/esbuild-MIT.txt": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681"
       }
     }
   ],

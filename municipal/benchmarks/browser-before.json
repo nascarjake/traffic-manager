@@ -1,0 +1,23 @@
+{
+  "activeCars": "144",
+  "cameraState": "{\"x\":195,\"y\":290,\"z\":245,\"targetX\":0,\"targetZ\":-60,\"distance\":463.8426457323647,\"selected\":null}",
+  "crossingConflicts": "0",
+  "drawCalls": "968",
+  "fps": "119",
+  "geometries": "740",
+  "junctionFocus": "{\"enabled\":true}",
+  "laneChangingCars": "0",
+  "pedestrians": "53",
+  "pedestriansCrossing": "15",
+  "permittedLaneArrows": "63",
+  "renderMs": "4.2",
+  "routeStats": "{}",
+  "selectedTurning": "0",
+  "selectedWaiting": "0",
+  "totalRequests": "320",
+  "trafficLens": "true",
+  "triangles": "1920697",
+  "turningCars": "5",
+  "visibleCars": "54",
+  "visualStats": "{\"buildings\":2299,\"detailChunks\":8,\"trees\":697,\"parkedCars\":219,\"canopyClusters\":6970}"
+}

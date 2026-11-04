@@ -30,10 +30,11 @@ The traffic model combines observed counts where available with estimated trip p
 
 ## Run locally
 
-Node 20+ and Python 3 are sufficient; no dependency installation is required.
+Node 20+ and Python 3 are required. Install the pinned build dependency once with npm ci.
 
 ```sh
 cd municipal
+npm ci
 npm run dev
 ```
 

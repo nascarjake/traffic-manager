@@ -21,6 +21,7 @@ jobs:
       - name: Verify simulation and credits
         working-directory: municipal
         run: |
+          npm ci
           npm test
           npm run credits:check
           npm run build

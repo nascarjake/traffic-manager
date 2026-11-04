@@ -1,3 +1,4 @@
+import {updateInstanceRange} from './render-resources.js';
 import {vehicleInJunctionFocus} from './junction-focus-state.js';
 import * as THREE from 'three';
 import {carPose} from './motion.js';
@@ -11,7 +12,7 @@ export class VehicleCues{
   }
  }
  update(cars,camera,height,selected=null){this.group.visible=this.enabled;if(!this.enabled)return;const counts={frame:0,left:0,through:0,right:0};
-  for(const car of cars){const focused=vehicleInJunctionFocus(car,selected),p=carPose(car),cue=vehicleCue(car),distance=camera.position.distanceTo(new THREE.Vector3(p.x,p.y||0,p.z)),perPixel=2*distance*Math.tan(camera.fov*Math.PI/360)/height,scale=Math.max(3.2,Math.min(32,perPixel*6.2));this.tmp.position.set(p.x,3+(p.y||0),p.z);this.tmp.rotation.set(0,p.angle,0);this.tmp.scale.set(scale*(selected&&focused?1.18:1),1,scale*(selected&&focused?1.18:1));this.tmp.updateMatrix();this.color.setHex(TRAFFIC_COLORS[cue.state]).multiplyScalar(selected&&!focused?.38:1);for(const key of['frame',cue.movement]){const mesh=this.parts[key],i=counts[key]++;mesh.setMatrixAt(i,this.tmp.matrix);mesh.setColorAt(i,this.color);}}
-  for(const [key,mesh]of Object.entries(this.parts)){mesh.count=counts[key];mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;}
+  for(const car of cars){const focused=vehicleInJunctionFocus(car,selected),p=carPose(car),cue=vehicleCue(car),distance=Math.hypot(camera.position.x-p.x,camera.position.y-(p.y||0),camera.position.z-p.z),perPixel=2*distance*Math.tan(camera.fov*Math.PI/360)/height,scale=Math.max(3.2,Math.min(32,perPixel*6.2));this.tmp.position.set(p.x,3+(p.y||0),p.z);this.tmp.rotation.set(0,p.angle,0);this.tmp.scale.set(scale*(selected&&focused?1.18:1),1,scale*(selected&&focused?1.18:1));this.tmp.updateMatrix();this.color.setHex(TRAFFIC_COLORS[cue.state]).multiplyScalar(selected&&!focused?.38:1);for(const key of['frame',cue.movement]){const mesh=this.parts[key],i=counts[key]++;mesh.setMatrixAt(i,this.tmp.matrix);mesh.setColorAt(i,this.color);}}
+  for(const [key,mesh]of Object.entries(this.parts)){updateInstanceRange(mesh,counts[key]);}
  }
 }

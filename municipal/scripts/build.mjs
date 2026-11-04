@@ -1,11 +1,12 @@
-import {mkdir,cp,rm,readdir,readFile,writeFile} from 'node:fs/promises';
-await rm('dist',{recursive:true,force:true});await mkdir('dist');
-for(const f of ['index.html','src','licenses','credits.json'])await cp(f,`dist/${f}`,{recursive:true});
-await cp('public','dist',{recursive:true});
-// Version the application's module graph so a release cannot mix cached physics/UI modules.
-const {createHash}=await import('node:crypto'),files=(await readdir('src')).filter(f=>/\.(js|css)$/.test(f)).sort(),hash=createHash('sha256');
-for(const file of files)hash.update(await readFile(`src/${file}`));
-const version=hash.digest('hex').slice(0,12);
-for(const file of files.filter(f=>f.endsWith('.js'))){const path=`dist/src/${file}`,source=await readFile(path,'utf8');await writeFile(path,source.replace(/((?:from\s*|import\s*\()\s*['"])(\.{1,2}\/[^'"]+\.js)(['"])/g,`$1$2?v=${version}$3`));}
-const html=await readFile('dist/index.html','utf8');await writeFile('dist/index.html',html.replace('./src/early-location.js',`./src/early-location.js?v=${version}`).replace('./src/main.js',`./src/main.js?v=${version}`).replace('./src/style.css',`./src/style.css?v=${version}`));
-console.log(`Built self-contained WebGL game to dist/ (${version})`);
+import {mkdir,cp,rm,readFile,writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';import {build,transform} from 'esbuild';import {createHash} from 'node:crypto';import {gzipSync} from 'node:zlib';
+await rm('dist',{recursive:true,force:true});await mkdir('dist/src',{recursive:true});
+for(const f of ['licenses','credits.json'])await cp(f,`dist/${f}`,{recursive:true});await cp('public','dist',{recursive:true});
+const result=await build({entryPoints:['src/main.js','src/early-location.js'],outdir:'dist/src',bundle:true,splitting:true,format:'esm',target:'es2022',minify:true,legalComments:'inline',entryNames:'[name]-[hash]',chunkNames:'shared-[hash]',metafile:true,plugins:[{name:'local-vendor',setup(b){b.onResolve({filter:/^three(?:\/|$)/},args=>({path:resolve('public/vendor/'+(args.path==='three'?'three.module.js':args.path.slice('three/addons/'.length)))}));b.onResolve({filter:/vendor\/leaflet\.js$/},()=>({path:'../vendor/leaflet.js',external:true}));}}]});
+const outputs=Object.entries(result.metafile.outputs),entry=name=>outputs.find(([,v])=>v.entryPoint===`src/${name}.js`)[0].replace('dist/','./');
+const css=(await transform(await readFile('src/style.css','utf8'),{loader:'css',minify:true,legalComments:'inline'})).code,cssName=`style-${createHash('sha256').update(css).digest('hex').slice(0,12)}.css`;await writeFile('dist/src/'+cssName,css);
+let html=await readFile('index.html','utf8');html=html.replace(/<script type="importmap">[\s\S]*?<\/script>/,'').replace('<link rel="stylesheet" href="./vendor/leaflet.css">','').replace('./src/main.js',entry('main')).replace('./src/early-location.js',entry('early-location')).replace('./src/style.css','./src/'+cssName);
+const shared=outputs.filter(([p,v])=>!v.entryPoint&&p.endsWith('.js')).map(([p])=>`<link rel="modulepreload" href="${p.replace('dist/','./')}">`).join('');html=html.replace('</head>',shared+'</head>');await writeFile('dist/index.html',html);
+// Original vendor files and licenses stay in source; deploy the bundled derivation only.
+for(const f of ['three.module.js','three.core.js','OrbitControls.js','BufferGeometryUtils.js'])await rm('dist/vendor/'+f);
+const sizes=[];for(const [path]of outputs){const data=await readFile(path);sizes.push({file:path.replace('dist/',''),bytes:data.length,gzipBytes:gzipSync(data).length});}await writeFile('dist/build-stats.json',JSON.stringify({javascript:sizes,totalBytes:sizes.reduce((s,x)=>s+x.bytes,0),gzipBytes:sizes.reduce((s,x)=>s+x.gzipBytes,0)},null,2));console.log('Bundled game:',sizes.map(x=>`${x.file} ${x.bytes} B`).join(', '));

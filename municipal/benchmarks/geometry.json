@@ -1,0 +1,66 @@
+{
+  "before": [
+    {
+      "graphMs": 74.838458,
+      "geometryBuildMs": 321.881458,
+      "uniqueGeometries": 610,
+      "uniqueMaterials": 610,
+      "typedBufferBytes": 24913698,
+      "visibleMeshBatches": 537,
+      "triangles": 1208543,
+      "detailChunks": 8
+    },
+    {
+      "graphMs": 91.305125,
+      "geometryBuildMs": 550.9802500000001,
+      "uniqueGeometries": 610,
+      "uniqueMaterials": 610,
+      "typedBufferBytes": 24913698,
+      "visibleMeshBatches": 537,
+      "triangles": 1208543,
+      "detailChunks": 8
+    },
+    {
+      "graphMs": 81.71104199999999,
+      "geometryBuildMs": 427.84825,
+      "uniqueGeometries": 610,
+      "uniqueMaterials": 610,
+      "typedBufferBytes": 24913698,
+      "visibleMeshBatches": 537,
+      "triangles": 1208543,
+      "detailChunks": 8
+    }
+  ],
+  "after": [
+    {
+      "graphMs": 74.168542,
+      "geometryBuildMs": 305.020833,
+      "uniqueGeometries": 214,
+      "uniqueMaterials": 210,
+      "typedBufferBytes": 14554661,
+      "visibleMeshBatches": 350,
+      "triangles": 1206827,
+      "detailChunks": 8
+    },
+    {
+      "graphMs": 92.925334,
+      "geometryBuildMs": 315.540041,
+      "uniqueGeometries": 214,
+      "uniqueMaterials": 210,
+      "typedBufferBytes": 14554661,
+      "visibleMeshBatches": 350,
+      "triangles": 1206827,
+      "detailChunks": 8
+    },
+    {
+      "graphMs": 95.141667,
+      "geometryBuildMs": 359.561667,
+      "uniqueGeometries": 214,
+      "uniqueMaterials": 210,
+      "typedBufferBytes": 14554661,
+      "visibleMeshBatches": 350,
+      "triangles": 1206827,
+      "detailChunks": 8
+    }
+  ]
+}

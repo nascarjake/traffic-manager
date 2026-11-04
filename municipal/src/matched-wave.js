@@ -11,7 +11,7 @@ export function matchedVerdict(before,after){
 export async function evaluateMatchedWave(world,plans,node,{count=30,mix='mixed',candidate,original=defaultPlan(node),onProgress=()=>{},yieldTask=()=>new Promise(r=>setTimeout(r,0))}={}){
  if(!validatePlan(candidate,node)||!validatePlan(original,node))throw Error('Check the timing program before comparing.');
  // Snapshot all inputs before yielding. Changes to the live district cannot affect either run.
- const snapshot=structuredClone(world),settings=structuredClone(plans),beforePlan=structuredClone(original),afterPlan=structuredClone(candidate),id=node.id;
+ const snapshot=structuredClone({edges:world.edges,edgeById:world.edgeById,nodes:world.nodes,junctions:world.junctions,origins:world.origins,outlets:world.outlets}),settings=structuredClone(plans),beforePlan=structuredClone(original),afterPlan=structuredClone(candidate),id=node.id;
  const run=async(plan,label)=>{
   const copy=structuredClone(snapshot),junction=copy.nodes.get(id),programs=structuredClone(settings);programs.set(id,plan);
   const sim=createJunctionDrill(copy,programs,junction,{count,mix});let peakQueue=0,peakRoadQueue=0,peakEntry=sim.pendingTrips.length,queueIntegral=0;const series=[];

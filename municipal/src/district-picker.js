@@ -1,8 +1,10 @@
 import {districtBounds} from './district.js';
+let leafletCss;
+function loadLeafletCss(){if(!leafletCss)leafletCss=new Promise((resolve,reject)=>{const link=document.createElement('link');link.rel='stylesheet';link.href=new URL('../vendor/leaflet.css',import.meta.url).href;link.onload=resolve;link.onerror=()=>{leafletCss=null;link.remove();reject(Error('District map styles could not load. Retry.'));};document.head.append(link);});return leafletCss;}
 const limitCenter=c=>({lat:Math.max(-85,Math.min(85,c.lat)),lon:((c.lon+180)%360+360)%360-180});
 export function selectedDistrict(center,radius){const pin=limitCenter(center);return{center:pin,radius:Number(radius),bounds:districtBounds(pin,Number(radius))};}
 export async function mountDistrictPicker(host,initial,radius,onChange){
- await import('../vendor/leaflet.js');if(!host.isConnected)return null;
+ await Promise.all([loadLeafletCss(),import('../vendor/leaflet.js')]);if(!host.isConnected)return null;
  const L=window.L,map=L.map(host,{zoomControl:true,scrollWheelZoom:true,worldCopyJump:true,minZoom:3,maxZoom:19});
  const tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,updateWhenIdle:true,keepBuffer:1,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>'});
  const icon=L.divIcon({className:'district-pin',html:'<span>⌖</span>',iconSize:[34,42],iconAnchor:[17,39]});

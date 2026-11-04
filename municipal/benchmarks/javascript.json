@@ -1,0 +1,28 @@
+{
+  "before": {
+    "modules": 34,
+    "bytes": 2422483,
+    "gzipBytes": 519422
+  },
+  "after": {
+    "javascript": [
+      {
+        "file": "src/main-JFWFNWEQ.js",
+        "bytes": 795850,
+        "gzipBytes": 223931
+      },
+      {
+        "file": "src/early-location-GFPTFQIM.js",
+        "bytes": 71,
+        "gzipBytes": 86
+      },
+      {
+        "file": "src/shared-W2YTVXO3.js",
+        "bytes": 7530,
+        "gzipBytes": 3034
+      }
+    ],
+    "totalBytes": 803451,
+    "gzipBytes": 227051
+  }
+}
