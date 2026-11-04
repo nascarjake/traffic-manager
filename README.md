@@ -10,6 +10,8 @@ Textured façades, varied roofs, street trees, detailed vehicles and mapped park
 
 - Search OpenStreetMap, move the district pin, and import up to a 2.7 km square of streets and buildings.
 - Program fixed-time/actuated signals, protected left arrows and pedestrian WALK/clearance stages in a live controller cabinet.
+- See moving, turning and waiting cars through a distance-scaled traffic lens, with live lane permission arrows and a per-approach movement board.
+- Send repeatable 30- or 60-car waves through a selected intersection, retune and replay for silver/gold clearance goals.
 - Inspect lane right-of-way on the map and follow individual cars along smooth turning paths to named destinations.
 - Feed traffic from highway/arterial gateways and local building activity, with visible arrival estimates and adjustable traffic load.
 - Convert signals and all-way stops, widen approaches, and add left-turn bays within a public works budget.

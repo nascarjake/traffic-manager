@@ -1,7 +1,8 @@
 import {roadWidth,sampleRoad} from './city-layout.js';
 export function movementForPaths(incoming,outgoing){
  if(!outgoing||!incoming.edge.points||!outgoing.edge.points)return 'through';
- const e=incoming.edge,q=outgoing.edge,end=incoming.reverse?e.points[0]:e.points.at(-1),before=incoming.reverse?e.points[1]:e.points.at(-2),after=outgoing.reverse?q.points.at(-2):q.points[1];
+ // Look beyond the short kinks introduced when mapped junction nodes merge.
+ const e=incoming.edge,q=outgoing.edge,end=incoming.reverse?e.points[0]:e.points.at(-1),a=Math.min(35,e.length*.45),b=Math.min(35,q.length*.45),before=sampleRoad(e,incoming.reverse?a:e.length-a),after=sampleRoad(q,outgoing.reverse?q.length-b:b);
  const ax=end.x-before.x,az=end.z-before.z,bx=after.x-end.x,bz=after.z-end.z,angle=Math.atan2(ax*bz-az*bx,ax*bx+az*bz);
  return angle<-.4?'left':angle>.4?'right':'through';
 }
