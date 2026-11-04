@@ -10,7 +10,13 @@ export function laneMovements(e,reverse,lane,imported=false){
  }
  if(count===1)return['left','through','right'];return lane===0?['left','through']:lane===count-1?['through','right']:['through'];
 }
-export function eligibleLanes(p,movement,imported=false){const count=imported?p.edge.baseLanes||p.edge.lanes:p.edge.lanes;return Array.from({length:count},(_,i)=>i).filter(i=>laneMovements(p.edge,p.reverse,i,imported).includes(movement));}
+const eligibilityCache=new WeakMap();
+export function eligibleLanes(p,movement,imported=false){
+ const e=p.edge,count=imported?e.baseLanes||e.lanes:e.lanes,bay=!imported&&!!e.turnBay,approach=e.laneApproaches?.[p.reverse?'backward':'forward'],tags=approach?.tags||e.tags,turn=tags?.['turn:lanes'],forward=tags?.['turn:lanes:forward'],backward=tags?.['turn:lanes:backward'];
+ let records=eligibilityCache.get(e);if(!records){records=[];eligibilityCache.set(e,records);}const key=Number(!!p.reverse)*2+Number(imported);let cache=records[key];
+ if(!cache||cache.count!==count||cache.bay!==bay||cache.turn!==turn||cache.forward!==forward||cache.backward!==backward||cache.osm!==e.osmAligned||cache.approach!==approach?.osmForward||cache.ef!==e.forward||cache.eb!==e.backward){cache={count,bay,turn,forward,backward,osm:e.osmAligned,approach:approach?.osmForward,ef:e.forward,eb:e.backward,lanes:{}};records[key]=cache;}
+ return cache.lanes[movement]||(cache.lanes[movement]=Array.from({length:count},(_,i)=>i).filter(i=>laneMovements(e,p.reverse,i,imported).includes(movement)));
+}
 export function legalConnection(incoming,outgoing,imported=false){if(!incoming||!outgoing)return true;if(incoming.edge===outgoing.edge)return false;return eligibleLanes(incoming,movementForPaths(incoming,outgoing),imported).length>0;}
 export function incomingPaths(n){return n.edges.filter(e=>e.a===n.id?e.backward:e.forward).map(edge=>({edge,reverse:edge.a===n.id}));}
 export function outgoingPaths(n){return n.edges.filter(e=>e.a===n.id?e.forward:e.backward).map(edge=>({edge,reverse:edge.b===n.id}));}

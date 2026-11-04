@@ -1,3 +1,9 @@
+// Routes refer only to the current graph. An LRU ceiling bounds long-session caching.
+export class RouteCache extends Map{
+ constructor(limit=4096){super();this.limit=Math.max(0,Math.floor(Number.isFinite(limit)?limit:4096));}
+ get(key){if(!super.has(key))return undefined;const value=super.get(key);super.delete(key);super.set(key,value);return value;}
+ set(key,value){super.delete(key);super.set(key,value);while(this.size>this.limit)super.delete(this.keys().next().value);return this;}
+}
 import {roadSpeed,legalConnection} from './lanes.js';
 export function findRoute(world,start,end,initial=null,terminal=null){if(world.nodes.get(start)?.component!==world.nodes.get(end)?.component)return null;
  const heap=[],push=item=>{heap.push(item);let i=heap.length-1;while(i){const parent=(i-1)>>1;if(heap[parent].cost<=item.cost)break;heap[i]=heap[parent];i=parent;}heap[i]=item;},pop=()=>{const first=heap[0],last=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let child=i*2+1;if(child+1<heap.length&&heap[child+1].cost<heap[child].cost)child++;if(heap[child].cost>=last.cost)break;heap[i]=heap[child];i=child;}heap[i]=last;}return first;};

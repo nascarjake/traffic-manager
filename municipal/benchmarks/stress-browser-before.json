@@ -1,0 +1,867 @@
+{
+  "started": "2026-11-04T08:20:21.058Z",
+  "map": {
+    "side": 2700,
+    "buildings": 16551,
+    "links": 954,
+    "junctions": 454
+  },
+  "phases": [
+    {
+      "phase": 0,
+      "frames": 3127,
+      "fps": 48.6753972096093,
+      "cpuMean": 17.403901503190546,
+      "intervalP95": 41.75,
+      "intervalP99": 66.5,
+      "cpuP95": 38.5,
+      "cpuP99": 60,
+      "longFrames": 71
+    },
+    {
+      "phase": 1,
+      "frames": 3494,
+      "fps": 58.20490993564809,
+      "cpuMean": 15.509015453632859,
+      "intervalP95": 33.5,
+      "intervalP99": 50.75,
+      "cpuP95": 31.5,
+      "cpuP99": 48.75,
+      "longFrames": 45
+    },
+    {
+      "phase": 2,
+      "frames": 2551,
+      "fps": 42.52545526075389,
+      "cpuMean": 21.41732653922915,
+      "intervalP95": 49.5,
+      "intervalP99": 66.75,
+      "cpuP95": 42.75,
+      "cpuP99": 61.5,
+      "longFrames": 94
+    },
+    {
+      "phase": 3,
+      "frames": 2984,
+      "fps": 49.733333333333334,
+      "cpuMean": 17.803485255858213,
+      "intervalP95": 38.75,
+      "intervalP99": 65,
+      "cpuP95": 32.5,
+      "cpuP99": 59,
+      "longFrames": 55
+    },
+    {
+      "phase": 4,
+      "frames": 2011,
+      "fps": 33.519459954996265,
+      "cpuMean": 27.4447538505319,
+      "intervalP95": 66,
+      "intervalP99": 91.5,
+      "cpuP95": 60,
+      "cpuP99": 86.75,
+      "longFrames": 220
+    }
+  ],
+  "checkpoints": [
+    {
+      "seconds": 0.21930000004768407,
+      "phase": 0,
+      "simTime": 75.00000000000053,
+      "cars": 594,
+      "pending": 407,
+      "routes": 1468,
+      "completed": 3,
+      "heap": 455536985,
+      "geometries": "423",
+      "geometryBytes": "20920395",
+      "textures": "21",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":0,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "6.83",
+      "drawCalls": "542"
+    },
+    {
+      "seconds": 10.001800000047684,
+      "phase": 0,
+      "simTime": 84.79999999999997,
+      "cars": 681,
+      "pending": 544,
+      "routes": 1742,
+      "completed": 4,
+      "heap": 190723772,
+      "geometries": "832",
+      "geometryBytes": "62549560",
+      "textures": "21",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":10,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "4.35",
+      "drawCalls": "485"
+    },
+    {
+      "seconds": 20.002400000047686,
+      "phase": 0,
+      "simTime": 94.7999999999994,
+      "cars": 755,
+      "pending": 695,
+      "routes": 2052,
+      "completed": 8,
+      "heap": 219785973,
+      "geometries": "2463",
+      "geometryBytes": "76608671",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":31,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "10.26",
+      "drawCalls": "1488"
+    },
+    {
+      "seconds": 30.015200000047685,
+      "phase": 0,
+      "simTime": 104.79999999999883,
+      "cars": 822,
+      "pending": 838,
+      "routes": 2304,
+      "completed": 11,
+      "heap": 269598218,
+      "geometries": "2696",
+      "geometryBytes": "76097083",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":29,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "9.03",
+      "drawCalls": "1277"
+    },
+    {
+      "seconds": 40.00690000004768,
+      "phase": 0,
+      "simTime": 114.79999999999826,
+      "cars": 881,
+      "pending": 1003,
+      "routes": 2554,
+      "completed": 16,
+      "heap": 206170995,
+      "geometries": "2784",
+      "geometryBytes": "65711702",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":15,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "4.04",
+      "drawCalls": "357"
+    },
+    {
+      "seconds": 50.01110000004768,
+      "phase": 0,
+      "simTime": 124.7999999999977,
+      "cars": 936,
+      "pending": 1173,
+      "routes": 2827,
+      "completed": 23,
+      "heap": 247729249,
+      "geometries": "3631",
+      "geometryBytes": "81497793",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":37,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "20.65",
+      "drawCalls": "2558"
+    },
+    {
+      "seconds": 60.01940000004768,
+      "phase": 1,
+      "simTime": 0,
+      "cars": 0,
+      "pending": 120,
+      "routes": 0,
+      "completed": 0,
+      "heap": 240577089,
+      "geometries": "3210",
+      "geometryBytes": "66179473",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":14,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "5.93",
+      "drawCalls": "559"
+    },
+    {
+      "seconds": 70.01110000004768,
+      "phase": 1,
+      "simTime": 30.000000000000156,
+      "cars": 52,
+      "pending": 66,
+      "routes": 0,
+      "completed": 2,
+      "heap": 250791955,
+      "geometries": "3383",
+      "geometryBytes": "66390323",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":17,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "4.58",
+      "drawCalls": "375"
+    },
+    {
+      "seconds": 80.02690000004768,
+      "phase": 1,
+      "simTime": 60.00000000000058,
+      "cars": 85,
+      "pending": 30,
+      "routes": 0,
+      "completed": 5,
+      "heap": 270077523,
+      "geometries": "3634",
+      "geometryBytes": "78415430",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":30,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "11.00",
+      "drawCalls": "1082"
+    },
+    {
+      "seconds": 90.00280000004769,
+      "phase": 1,
+      "simTime": 89.89999999999917,
+      "cars": 87,
+      "pending": 25,
+      "routes": 0,
+      "completed": 8,
+      "heap": 217567537,
+      "geometries": "3338",
+      "geometryBytes": "64244615",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":12,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "4.72",
+      "drawCalls": "421"
+    },
+    {
+      "seconds": 100.01860000004768,
+      "phase": 1,
+      "simTime": 119.89999999999746,
+      "cars": 86,
+      "pending": 23,
+      "routes": 0,
+      "completed": 11,
+      "heap": 284205212,
+      "geometries": "3767",
+      "geometryBytes": "77301350",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":32,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "9.72",
+      "drawCalls": "1238"
+    },
+    {
+      "seconds": 110.00700000004768,
+      "phase": 1,
+      "simTime": 149.89999999999577,
+      "cars": 84,
+      "pending": 23,
+      "routes": 0,
+      "completed": 13,
+      "heap": 274207603,
+      "geometries": "3656",
+      "geometryBytes": "72725433",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":25,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "9.71",
+      "drawCalls": "953"
+    },
+    {
+      "seconds": 120.00710000004767,
+      "phase": 2,
+      "simTime": 0,
+      "cars": 0,
+      "pending": 120,
+      "routes": 0,
+      "completed": 0,
+      "heap": 264338416,
+      "geometries": "3480",
+      "geometryBytes": "65711702",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":15,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "4.97",
+      "drawCalls": "295"
+    },
+    {
+      "seconds": 130.0111000000477,
+      "phase": 2,
+      "simTime": 29.800000000000153,
+      "cars": 52,
+      "pending": 66,
+      "routes": 0,
+      "completed": 2,
+      "heap": 285332940,
+      "geometries": "4501",
+      "geometryBytes": "84991841",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":38,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "28.57",
+      "drawCalls": "4862"
+    },
+    {
+      "seconds": 140.02360000004768,
+      "phase": 2,
+      "simTime": 59.80000000000058,
+      "cars": 85,
+      "pending": 30,
+      "routes": 0,
+      "completed": 5,
+      "heap": 265086237,
+      "geometries": "4351",
+      "geometryBytes": "79081028",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":30,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "11.32",
+      "drawCalls": "1006"
+    },
+    {
+      "seconds": 150.0111000000477,
+      "phase": 2,
+      "simTime": 89.79999999999917,
+      "cars": 87,
+      "pending": 25,
+      "routes": 0,
+      "completed": 8,
+      "heap": 299725877,
+      "geometries": "4679",
+      "geometryBytes": "79592679",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":33,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "11.71",
+      "drawCalls": "1545"
+    },
+    {
+      "seconds": 160.0413000000477,
+      "phase": 2,
+      "simTime": 119.79999999999747,
+      "cars": 86,
+      "pending": 23,
+      "routes": 0,
+      "completed": 11,
+      "heap": 300731930,
+      "geometries": "4861",
+      "geometryBytes": "87571286",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":41,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "21.50",
+      "drawCalls": "3918"
+    },
+    {
+      "seconds": 170.00310000004768,
+      "phase": 2,
+      "simTime": 149.79999999999578,
+      "cars": 84,
+      "pending": 23,
+      "routes": 0,
+      "completed": 13,
+      "heap": 249177442,
+      "geometries": "4577",
+      "geometryBytes": "72572045",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":23,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "7.07",
+      "drawCalls": "583"
+    },
+    {
+      "seconds": 180.00300000004768,
+      "phase": 3,
+      "simTime": 0,
+      "cars": 0,
+      "pending": 120,
+      "routes": 0,
+      "completed": 0,
+      "heap": 328585642,
+      "geometries": "5050",
+      "geometryBytes": "86843784",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":44,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "27.25",
+      "drawCalls": "4373"
+    },
+    {
+      "seconds": 190.01550000004767,
+      "phase": 3,
+      "simTime": 30.000000000000156,
+      "cars": 52,
+      "pending": 66,
+      "routes": 0,
+      "completed": 2,
+      "heap": 268628425,
+      "geometries": "4608",
+      "geometryBytes": "68909531",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":19,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "8.87",
+      "drawCalls": "695"
+    },
+    {
+      "seconds": 200.0154000000477,
+      "phase": 3,
+      "simTime": 59.00000000000057,
+      "cars": 85,
+      "pending": 30,
+      "routes": 0,
+      "completed": 5,
+      "heap": 234805830,
+      "geometries": "4513",
+      "geometryBytes": "64851260",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":14,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "7.78",
+      "drawCalls": "333"
+    },
+    {
+      "seconds": 210.01950000004769,
+      "phase": 3,
+      "simTime": 88.89999999999922,
+      "cars": 87,
+      "pending": 25,
+      "routes": 0,
+      "completed": 8,
+      "heap": 269517246,
+      "geometries": "4988",
+      "geometryBytes": "82803317",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":40,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "15.67",
+      "drawCalls": "2394"
+    },
+    {
+      "seconds": 220.0363000000477,
+      "phase": 3,
+      "simTime": 118.89999999999752,
+      "cars": 86,
+      "pending": 23,
+      "routes": 0,
+      "completed": 11,
+      "heap": 247013655,
+      "geometries": "4514",
+      "geometryBytes": "66179473",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":14,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "6.98",
+      "drawCalls": "481"
+    },
+    {
+      "seconds": 230.0113000000477,
+      "phase": 3,
+      "simTime": 148.89999999999583,
+      "cars": 84,
+      "pending": 23,
+      "routes": 0,
+      "completed": 13,
+      "heap": 244332855,
+      "geometries": "4570",
+      "geometryBytes": "66390323",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":17,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "6.07",
+      "drawCalls": "373"
+    },
+    {
+      "seconds": 240.0114000000477,
+      "phase": 4,
+      "simTime": 134.79999999999714,
+      "cars": 984,
+      "pending": 1320,
+      "routes": 3041,
+      "completed": 32,
+      "heap": 264922949,
+      "geometries": "4885",
+      "geometryBytes": "82409020",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":34,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "12.60",
+      "drawCalls": "1536"
+    },
+    {
+      "seconds": 250.01560000004767,
+      "phase": 4,
+      "simTime": 144.69999999999658,
+      "cars": 1041,
+      "pending": 1497,
+      "routes": 3322,
+      "completed": 40,
+      "heap": 257447511,
+      "geometries": "4493",
+      "geometryBytes": "64768539",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":13,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "6.45",
+      "drawCalls": "416"
+    },
+    {
+      "seconds": 260.02800000004765,
+      "phase": 4,
+      "simTime": 154.799999999996,
+      "cars": 1103,
+      "pending": 1672,
+      "routes": 3586,
+      "completed": 44,
+      "heap": 245158222,
+      "geometries": "4833",
+      "geometryBytes": "77301350",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":32,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "10.43",
+      "drawCalls": "1279"
+    },
+    {
+      "seconds": 270.0196000000477,
+      "phase": 4,
+      "simTime": 164.69999999999544,
+      "cars": 1152,
+      "pending": 1825,
+      "routes": 3811,
+      "completed": 53,
+      "heap": 241417396,
+      "geometries": "4589",
+      "geometryBytes": "67964845",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":18,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "8.98",
+      "drawCalls": "620"
+    },
+    {
+      "seconds": 280.0322000000477,
+      "phase": 4,
+      "simTime": 174.69999999999487,
+      "cars": 1214,
+      "pending": 1981,
+      "routes": 4058,
+      "completed": 59,
+      "heap": 255499199,
+      "geometries": "4528",
+      "geometryBytes": "65612762",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":15,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "6.21",
+      "drawCalls": "338"
+    },
+    {
+      "seconds": 290.0156000000477,
+      "phase": 4,
+      "simTime": 184.5999999999943,
+      "cars": 1279,
+      "pending": 2146,
+      "routes": 4347,
+      "completed": 66,
+      "heap": 261316010,
+      "geometries": "4924",
+      "geometryBytes": "82479389",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":36,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "15.91",
+      "drawCalls": "1811"
+    },
+    {
+      "seconds": 300.0535,
+      "phase": 4,
+      "simTime": 194.59999999999374,
+      "cars": 1334,
+      "pending": 2319,
+      "routes": 4607,
+      "completed": 75,
+      "heap": 237330646,
+      "geometries": "4514",
+      "geometryBytes": "66179473",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":14,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "6.94",
+      "drawCalls": "405"
+    }
+  ],
+  "edits": [
+    {
+      "seconds": 0.21930000004768407,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 15.011100000047685,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        13,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 30.015200000047685,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 45.02350000004769,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 60.01940000004768,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 75.00280000004769,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        13,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 90.00280000004769,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 105.01590000004768,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        13,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 120.00710000004767,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 135.00660000004768,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        13,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 150.0111000000477,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 165.0111000000477,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        13,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 180.00300000004768,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 195.0154000000477,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        13,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 210.01950000004769,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 225.02400000004766,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        13,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 240.0114000000477,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 255.0024000000477,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 270.0196000000477,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 285.0822000000477,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        13,
+        30,
+        30
+      ]
+    }
+  ],
+  "waveResults": [
+    {
+      "phase": 1,
+      "completed": 15,
+      "generated": 120,
+      "time": 179.99999999999406
+    },
+    {
+      "phase": 2,
+      "completed": 15,
+      "generated": 120,
+      "time": 179.79999999999407
+    },
+    {
+      "phase": 3,
+      "completed": 15,
+      "generated": 120,
+      "time": 178.79999999999413
+    }
+  ],
+  "reason": "Completed 300-second soak"
+}

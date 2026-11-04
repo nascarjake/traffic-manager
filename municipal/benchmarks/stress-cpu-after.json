@@ -1,0 +1,207 @@
+{
+  "fixture": {
+    "sha256": "ab111e3659fe4691ac96ee31f94a07b068df458209004ccbb6d9f2036d385775",
+    "bounds": [
+      41.89757279913762,
+      -87.69369565404023,
+      41.92182720086238,
+      -87.66110434595979
+    ],
+    "source": "OpenStreetMap API 0.6 · tiled map query",
+    "acquired": "2026-11-04",
+    "elements": 142002,
+    "counts": 80
+  },
+  "runtime": "v20.18.0",
+  "gcAvailable": true,
+  "map": {
+    "side": 2700,
+    "buildings": 16551,
+    "links": 954,
+    "junctions": 454,
+    "origins": 16605
+  },
+  "worldMs": 1021.4647920000001,
+  "seconds": 1800,
+  "steps": {
+    "mean": 14.022606279525492,
+    "p95": 20.561124801635742,
+    "p99": 28.79312515258789,
+    "max": 173.0138702392578
+  },
+  "checkpoints": [
+    {
+      "seconds": 299.9999999999997,
+      "active": 1769,
+      "pending": 4231,
+      "upstream": 714,
+      "routes": 4096,
+      "heap": 142933200,
+      "completed": 196,
+      "generated": 6910,
+      "pedestrians": 396,
+      "pedestrianBacklog": 0
+    },
+    {
+      "seconds": 600.0000000000679,
+      "active": 2127,
+      "pending": 3873,
+      "upstream": 8059,
+      "routes": 4096,
+      "heap": 143640368,
+      "completed": 522,
+      "generated": 14581,
+      "pedestrians": 496,
+      "pedestrianBacklog": 0
+    },
+    {
+      "seconds": 900.0000000001361,
+      "active": 2360,
+      "pending": 3640,
+      "upstream": 15380,
+      "routes": 4096,
+      "heap": 144421512,
+      "completed": 828,
+      "generated": 22208,
+      "pedestrians": 695,
+      "pedestrianBacklog": 0
+    },
+    {
+      "seconds": 1200.000000000004,
+      "active": 2527,
+      "pending": 3473,
+      "upstream": 22714,
+      "routes": 4096,
+      "heap": 144916568,
+      "completed": 1105,
+      "generated": 29819,
+      "pedestrians": 1009,
+      "pedestrianBacklog": 0
+    },
+    {
+      "seconds": 1499.9999999997312,
+      "active": 2685,
+      "pending": 3315,
+      "upstream": 30107,
+      "routes": 4096,
+      "heap": 145500840,
+      "completed": 1350,
+      "generated": 37457,
+      "pedestrians": 1278,
+      "pedestrianBacklog": 0
+    },
+    {
+      "seconds": 1799.9999999994584,
+      "active": 2739,
+      "pending": 3261,
+      "upstream": 37484,
+      "routes": 4096,
+      "heap": 145590552,
+      "completed": 1542,
+      "generated": 45026,
+      "pedestrians": 1580,
+      "pedestrianBacklog": 0
+    }
+  ],
+  "waves": [
+    {
+      "run": 0,
+      "finished": true,
+      "cleared": 15,
+      "total": 120,
+      "remaining": 0,
+      "delay": 162.52212200033458,
+      "waiting": 95,
+      "medal": "retry",
+      "time": 180.09999999999405
+    },
+    {
+      "run": 1,
+      "finished": true,
+      "cleared": 15,
+      "total": 120,
+      "remaining": 0,
+      "delay": 162.52212200033458,
+      "waiting": 95,
+      "medal": "retry",
+      "time": 180.09999999999405
+    },
+    {
+      "run": 2,
+      "finished": true,
+      "cleared": 15,
+      "total": 120,
+      "remaining": 0,
+      "delay": 162.52212200033458,
+      "waiting": 95,
+      "medal": "retry",
+      "time": 180.09999999999405
+    },
+    {
+      "run": 3,
+      "finished": true,
+      "cleared": 15,
+      "total": 120,
+      "remaining": 0,
+      "delay": 162.52212200033458,
+      "waiting": 95,
+      "medal": "retry",
+      "time": 180.09999999999405
+    },
+    {
+      "run": 4,
+      "finished": true,
+      "cleared": 15,
+      "total": 120,
+      "remaining": 0,
+      "delay": 162.52212200033458,
+      "waiting": 95,
+      "medal": "retry",
+      "time": 180.09999999999405
+    },
+    {
+      "run": 5,
+      "finished": true,
+      "cleared": 15,
+      "total": 120,
+      "remaining": 0,
+      "delay": 162.52212200033458,
+      "waiting": 95,
+      "medal": "retry",
+      "time": 180.09999999999405
+    },
+    {
+      "run": 6,
+      "finished": true,
+      "cleared": 15,
+      "total": 120,
+      "remaining": 0,
+      "delay": 162.52212200033458,
+      "waiting": 95,
+      "medal": "retry",
+      "time": 180.09999999999405
+    },
+    {
+      "run": 7,
+      "finished": true,
+      "cleared": 15,
+      "total": 120,
+      "remaining": 0,
+      "delay": 162.52212200033458,
+      "waiting": 95,
+      "medal": "retry",
+      "time": 180.09999999999405
+    }
+  ],
+  "cycleHeaps": [
+    121740256,
+    121759952,
+    121792056,
+    121795640,
+    121796200,
+    121801840,
+    121800976,
+    121809072,
+    121808112
+  ]
+}

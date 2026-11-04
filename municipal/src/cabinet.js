@@ -17,7 +17,7 @@ export function cabinetMarkup(n,c={plan:{control:n.control},node:n}){
 export function mountCabinet(host,n,onPedestrianCall,c){handlers.set(host,onPedestrianCall);host.innerHTML=cabinetMarkup(n,c);host.dataset.control=c?.plan.control||n.control;host.querySelector('#pedestrian-call').onclick=onPedestrianCall;}
 export function cabinetSnapshot(n,c,sim){
  const signal=c.plan.control==='signal',readings=approachReadings(sim,n),people=sim.pedestrians.filter(p=>p.node===n.id);
- return{control:c.plan.control,signal,ped:c.pedestrianSignal(),waitingPeople:people.filter(p=>!p.walking).length,crossingPeople:people.filter(p=>p.walking).length,approaches:incomingApproaches(n).map(({e,bearing})=>{
+ return{control:c.plan.control,signal,ped:c.pedestrianSignal(),waitingPeople:people.filter(p=>!p.walking).length+(sim.pedestrianBacklog?.get(n.id)?.count||0),crossingPeople:people.filter(p=>p.walking).length,approaches:incomingApproaches(n).map(({e,bearing})=>{
   const group=n.groups.findIndex(g=>g.edges.includes(e.id)),leftPermitted=eligibleLanes({edge:e,reverse:e.a===n.id},'left').length>0,cars=sim.cars.filter(car=>{const p=car.path[car.index];return !car.turn&&p.edge.id===e.id&&(p.reverse?p.edge.a:p.edge.b)===n.id&&e.length-car.position<65;});
   return{edge:e,bearing,rule:approachRule(c,e.id),state:signal?c.movementSignal(e.id):null,left:signal&&leftPermitted&&c.plan.protectedLefts[group]?c.movementSignal(e.id,'left'):'off',waiting:readings.find(r=>r.edge===e)?.waiting||0,detected:cars.some(car=>e.length-car.position<40),movements:readings.find(r=>r.edge===e)?.movements||[]};
  })};
