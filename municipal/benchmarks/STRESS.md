@@ -43,7 +43,7 @@ After the first 10 seconds, scene geometry arrays ranged from 61.98 to 83.15 MB 
 
 Legacy browser heap samples fluctuated from 587.93 to 717.15 MB and ended at 622.59 MB, below the first sample of 695.05 MB. Their absolute values include unforced-GC/shared-heap effects; the stronger retention evidence is the explicit-GC CPU test and bounded resource/accounting checks, not a claim that the browser uses 146 MB total.
 
-Direct UI verification also used the actual +5 button: the target changed immediately, the row showed LIVE 23s → 28s, and the cabinet reported QUEUED · SAFE CLEARANCE during a running 120-car wave. The queued edit subsequently became ACTIVE with LIVE 28s. A new wave initialized with its edited timing. This preserves the controller's safety transition rather than instantly changing live right-of-way.
+Direct UI verification also used the actual +5 button: the target changed immediately, the row showed LIVE 23s → 28s, and the cabinet reported QUEUED · SAFE CLEARANCE during a running 120-car wave. The queued edit subsequently became ACTIVE with LIVE 28s. A new wave initialized with its edited timing. A separate combined case (recorded in `stress-browser-combined.json`) injects 120 cars into the ambient rush simulation without setting drill mode, while retaining the same camera sweep and timing writes. It reserves future departure IDs and checks available capacity; the normal cabinet and matched comparisons retain their isolated-wave behavior. This preserves the controller's safety transition rather than instantly changing live right-of-way.
 
 ## Fixes and regression coverage
 
@@ -54,3 +54,11 @@ Direct UI verification also used the actual +5 button: the target changed immedi
 - Far tree clusters use 20-triangle foliage. Shadows concentrate on a maximum 700 m half-span, avoid orbit-only redraws, and refresh at most 20 Hz during motion; crossing and light simulation keep their normal rate.
 - Camera frustum culling skips uploads for off-screen pedestrians. Their crossing simulation continues.
 - Regression coverage exercises cache eviction, telemetry bounds, weighted destination sampling, lane-work invalidation, car/pedestrian overload accounting and fair release, detail eviction, sign batching/picking and pedestrian culling. The complete simulation, movement, safety and matched-wave suite remains required.
+
+## Simultaneous rush + 120-car injection
+
+`stress-browser-combined.json` records a separate 60-second test after closing the extra public-verification game tab. The district warmed for 75 simulated seconds at rush demand 2.5×, then 120 trips were injected into that same simulation; ambient demand kept running, camera motion continued, and four green-time edits used safe controller clearance. Average frame rate was 72.8 FPS, frame interval p95 25.0 ms and p99 33.5 ms, with four frames above 50 ms and no captured console errors.
+
+The first checkpoint had 726 road cars and 1,026 entries; the final checkpoint had 1,175 road cars and 1,912 entries. Including completed trips, total requests increased from 1,753 to 3,113, confirming ongoing background departures. The final scene retained 65.61 MB of geometry arrays and 30 textures. Legacy JS heap decreased from 287.71 to 191.25 MB across the minute; its absolute scope still has the limitations described above.
+
+An exploratory combined run while another game tab rendered averaged 48 FPS. Closing that verification tab and rerunning produced the result above, despite the stronger rush warm-up. This is evidence that the app meets the measured single-game case, not a promise that it can hold the same rate with competing WebGL applications or on every GPU. The additive case is local stress instrumentation; the regular cabinet wave remains an isolated, repeatable timing test.

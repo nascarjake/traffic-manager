@@ -3,7 +3,7 @@ import {evaluateMatchedWave} from './matched-wave.js';
 import {CAMERA_KEYS,JunctionCycle,nearestJunction,directionalJunction,shortcut,currentDistrictRadius,TRAFFIC_PRESETS} from './navigation.js';
 import {locationStartup} from './early-location.js';
 import {fetchDistrict} from './load-district.js';
-import {createJunctionDrill,drillResult,drillConnections,drillKey,drillComparison} from './junction-drill.js';
+import {injectJunctionWave,createJunctionDrill,drillResult,drillConnections,drillKey,drillComparison} from './junction-drill.js';
 import {approachReadings,MOVEMENT_SYMBOLS} from './traffic-state.js';
 import {remainingDistance} from './motion.js';
 import {mountDistrictPicker} from './district-picker.js';
@@ -250,7 +250,7 @@ async function boot(){try{
   else {try{restoreSaved(startupSaved);}catch{const [raw,c]=await Promise.all([fetch('./data/wicker-park.json').then(r=>r.json()),fetch('./data/chicago-counts.json').then(r=>r.json())]);loadArea(raw,CENTER,c,'Wicker Park');}}
  }
  finishBoot();$('#boot').classList.add('done');setTimeout(()=>$('#boot').remove(),600);watchView(true);view.onCameraInput=()=>junctionCycle.reset();view.focusMap();requestAnimationFrame(frame);
- if(['127.0.0.1','localhost'].includes(location.hostname)&&new URLSearchParams(location.search).has('stress')){const {mountStressHarness}=await import('../benchmarks/browser-stress.js');stressHarness=mountStressHarness({get world(){return world},get sim(){return sim},get view(){return view},load(data){loadArea(data.raw,CENTER,data.counts,'Wicker Park stress district');},rush(){setTrafficPreset(TRAFFIC_PRESETS[3]);paused=false;speed=1;},select(n){selectJunction(n,{open:true,highlight:true});cabinetPage('program');},tune(delta){const before=draft.greens[0];draft.greens[0]=Math.max(8,Math.min(90,before+delta));renderEditor();apply();},wave(){ $('#drill-count').value='120';startDrill();speed=3;},live(){exitDrill();paused=false;speed=1;},pause(){paused=true;}});}
+ if(['127.0.0.1','localhost'].includes(location.hostname)&&new URLSearchParams(location.search).has('stress')){const {mountStressHarness}=await import('../benchmarks/browser-stress.js');stressHarness=mountStressHarness({get world(){return world},get sim(){return sim},get view(){return view},load(data){loadArea(data.raw,CENTER,data.counts,'Wicker Park stress district');},rush(){setTrafficPreset(TRAFFIC_PRESETS[3]);paused=false;speed=1;},select(n){selectJunction(n,{open:true,highlight:true});cabinetPage('program');},tune(delta){const before=draft.greens[0];draft.greens[0]=Math.max(8,Math.min(90,before+delta));renderEditor();apply();},wave(){ $('#drill-count').value='120';startDrill();speed=3;},combined(){injectJunctionWave(sim,plans,selected,{count:120});paused=false;speed=1;},live(){exitDrill();paused=false;speed=1;},pause(){paused=true;}});}
  // A compact inspection surface for deterministic integration checks and future tooling.
  window.municipal={get world(){return world},get sim(){return sim},get plans(){return plans},get budget(){return budget},get selected(){return selected},selectJunction,evaluate:()=>evaluate(world,plans,{period,demand:density}),parseCSV};
  }catch(e){$('#boot-status').textContent='Unable to initialize: '+e.message;console.error(e);}}

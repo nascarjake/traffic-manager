@@ -1,0 +1,214 @@
+{
+  "started": "2026-11-04T09:05:03.875Z",
+  "combinedRushWave": true,
+  "injected": 120,
+  "map": {
+    "side": 2700,
+    "buildings": 16551,
+    "links": 954,
+    "junctions": 454
+  },
+  "phases": [
+    {
+      "phase": 0,
+      "frames": 4542,
+      "fps": 72.81775201242809,
+      "cpuMean": 11.673910170859148,
+      "intervalP95": 25,
+      "intervalP99": 33.5,
+      "cpuP95": 21.25,
+      "cpuP99": 31.5,
+      "longFrames": 4
+    }
+  ],
+  "checkpoints": [
+    {
+      "seconds": 0.20999999995232793,
+      "phase": 0,
+      "simTime": 75.00000000000053,
+      "cars": 726,
+      "pending": 1026,
+      "materialized": 1752,
+      "deferred": 0,
+      "routes": 2281,
+      "completed": 1,
+      "heap": 287710124,
+      "geometries": "1589",
+      "geometryBytes": "66846381",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":0,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "5.71",
+      "drawCalls": "355"
+    },
+    {
+      "seconds": 10.00169999995231,
+      "phase": 0,
+      "simTime": 84.89999999999996,
+      "cars": 825,
+      "pending": 1153,
+      "materialized": 1978,
+      "deferred": 0,
+      "routes": 2536,
+      "completed": 1,
+      "heap": 192887276,
+      "geometries": "505",
+      "geometryBytes": "61980628",
+      "textures": "24",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":10,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "3.09",
+      "drawCalls": "249"
+    },
+    {
+      "seconds": 20.009999999952328,
+      "phase": 0,
+      "simTime": 94.8999999999994,
+      "cars": 920,
+      "pending": 1280,
+      "materialized": 2200,
+      "deferred": 0,
+      "routes": 2766,
+      "completed": 2,
+      "heap": 213239612,
+      "geometries": "1384",
+      "geometryBytes": "73844680",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":26,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "4.83",
+      "drawCalls": "512"
+    },
+    {
+      "seconds": 30.00169999995231,
+      "phase": 0,
+      "simTime": 104.79999999999883,
+      "cars": 994,
+      "pending": 1420,
+      "materialized": 2414,
+      "deferred": 0,
+      "routes": 2967,
+      "completed": 6,
+      "heap": 221459528,
+      "geometries": "1420",
+      "geometryBytes": "70264299",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":22,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "5.08",
+      "drawCalls": "579"
+    },
+    {
+      "seconds": 40.026699999952314,
+      "phase": 0,
+      "simTime": 114.89999999999826,
+      "cars": 1067,
+      "pending": 1568,
+      "materialized": 2635,
+      "deferred": 0,
+      "routes": 3234,
+      "completed": 11,
+      "heap": 186425935,
+      "geometries": "1460",
+      "geometryBytes": "65142770",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":15,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "2.74",
+      "drawCalls": "166"
+    },
+    {
+      "seconds": 50.00999999995233,
+      "phase": 0,
+      "simTime": 124.89999999999769,
+      "cars": 1127,
+      "pending": 1740,
+      "materialized": 2867,
+      "deferred": 0,
+      "routes": 3476,
+      "completed": 17,
+      "heap": 225063382,
+      "geometries": "2051",
+      "geometryBytes": "79485713",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":36,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "12.44",
+      "drawCalls": "1846"
+    },
+    {
+      "seconds": 60.0125,
+      "phase": 0,
+      "simTime": 134.79999999999714,
+      "cars": 1175,
+      "pending": 1912,
+      "materialized": 3087,
+      "deferred": 0,
+      "routes": 3707,
+      "completed": 26,
+      "heap": 191253440,
+      "geometries": "1658",
+      "geometryBytes": "65610541",
+      "textures": "30",
+      "visualStats": "{\"buildings\":16551,\"detailChunks\":14,\"trees\":6526,\"parkedCars\":1715,\"canopyClusters\":65260}",
+      "renderMs": "3.35",
+      "drawCalls": "291"
+    }
+  ],
+  "edits": [
+    {
+      "seconds": 0.20999999995232793,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 15.009999999952328,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        13,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 30.00169999995231,
+      "node": 13792282021,
+      "target": [
+        13,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    },
+    {
+      "seconds": 45.034999999952326,
+      "node": 13792282021,
+      "target": [
+        18,
+        30,
+        30
+      ],
+      "active": [
+        18,
+        30,
+        30
+      ]
+    }
+  ],
+  "waveResults": [],
+  "reason": "Completed 60-second combined rush + 120-car test",
+  "bundle": "./src/main-O6SWJOZV.js",
+  "warmupDemand": 2.5
+}

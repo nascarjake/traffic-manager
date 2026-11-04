@@ -33,3 +33,11 @@ export function drillComparison(result,previous){
  const time=all?`${Math.abs(previous.time-result.time).toFixed(1)}s ${result.time<=previous.time?'faster':'slower'} to clear all · `:'';
  return prefix+time+`${result.cleared-previous.cleared>=0?'+':''}${result.cleared-previous.cleared} cleared · ${Math.abs(previous.delay-result.delay).toFixed(1)}s ${result.delay<=previous.delay?'less':'more'} delay vs previous run.`;
 }
+// Local stress tooling can add a known wave while ambient demand continues.
+// Keep the same global population budget and reserve IDs from future departures.
+export function injectJunctionWave(sim,plans,node,{count=120,mix='mixed'}={}){
+ const wave=createJunctionDrill(sim.world,plans,node,{count,mix});
+ if(sim.cars.length+sim.pendingTrips.length+wave.pendingTrips.length>sim.maxTrips)throw Error('Not enough entry capacity for the combined stress wave.');
+ for(const trip of wave.pendingTrips){trip.id=trip.tripId=sim.tripDemand.serial++;trip.created=sim.time;}
+ sim.pendingTrips.push(...wave.pendingTrips);sim.generated+=wave.pendingTrips.length;return wave.pendingTrips.length;
+}
