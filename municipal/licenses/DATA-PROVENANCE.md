@@ -92,7 +92,7 @@ The location integration uses native browser APIs; no additional library, artwor
 
 ## Cabinet surface · 2026-11-04
 
-Metal 032 by Lennart Demes / ambientCG, CC0 1.0 Universal. Source: https://ambientcg.com/view?id=Metal032. Download: https://ambientcg.com/get?file=Metal032_1K-JPG.zip. Acquired 2026-11-04. Retained unmodified color map as `public/art/cabinet-metal032.jpg`; all illustrated cabinet geometry, screws, rails, displays and controls are original code. No manufacturer imagery/model is bundled.
+Metal 032 from ambientCG (site operated by Lennart Demes), CC0 1.0 Universal. The asset page does not separately name an individual author or copyright holder; those facts remain unknown in the canonical credit. Source: https://ambientcg.com/view?id=Metal032. Download: https://ambientcg.com/get?file=Metal032_1K-JPG.zip. Acquired 2026-11-04. Retained unmodified color map as `public/art/cabinet-metal032.jpg`; all illustrated cabinet geometry, screws, rails, displays and controls are original code. No manufacturer imagery/model is bundled.
 
 Downloaded ZIP SHA-256: `9e4f363905a647958c273154fa125d2a6440892d0e583f9b3af24bb08b5afc3c`. Color map SHA-256: `49493d6ade78ccbbbd270c6a15e4b4c9b1a097e66ddf28a1073de3e85712d9af`. Official source and CC0 license notices retained in `ambientcg-metal032-source.txt` and `ambientcg-license.txt`. Asset page specifies a procedural smooth grey metal material released 2020-08-09; individual asset creator is not separately listed, so creator credit follows ambientCG's operator Lennart Demes (https://docs.ambientcg.com/legal/).
 
