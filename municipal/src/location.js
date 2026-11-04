@@ -16,7 +16,7 @@ export class DistrictLocator{
   this.suspended=false;const generation=++this.generation,current=()=>!this.disposed&&generation===this.generation;
   if(!this.geo?.getCurrentPosition){this.onState('unavailable');return Promise.resolve();}
   this.onState('locating');
-  const fix=new Promise((resolve,reject)=>this.geo.getCurrentPosition(resolve,reject,{maximumAge:0,timeout:15000,enableHighAccuracy:true}));
+  const fix=new Promise((resolve,reject)=>this.geo.getCurrentPosition(resolve,reject,{maximumAge:0,timeout:15000,enableHighAccuracy:false}));
   const pending=fix.then(async position=>{if(!current())return;const center=locationCenter(position);this.onState('loading');await this.onFix(center,current);if(current())this.onState('ready');}).catch(error=>{if(current())this.onState(error?.code===1?'denied':error?.code===3?'timeout':'unavailable',error);}).finally(()=>{if(this.pending===pending)this.pending=null;});
   this.pending=pending;return pending;
  }

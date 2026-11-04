@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#242d2a"><title>MUNICIPAL — Traffic Control Simulator</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23242d2a'/%3E%3Cpath d='M7 23V9h4l5 8 5-8h4v14h-4v-8l-5 7-5-7v8' fill='%23e8b556'/%3E%3C/svg%3E"><link rel="stylesheet" href="./vendor/leaflet.css"><link rel="stylesheet" href="./src/style.css"><script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/"}}</script></head>
 <body>
-<div id="boot"><div class="boot-logo">M<span>▥</span></div><p>MUNICIPAL</p><small>INITIALIZING TRAFFIC WORKSTATION</small><div class="boot-progress"></div><span id="boot-status">Reading district geometry…</span></div>
+<div id="boot"><div class="boot-logo">M<span>▥</span></div><p>MUNICIPAL</p><small>INITIALIZING TRAFFIC WORKSTATION</small><div class="boot-progress"></div><span id="boot-status" role="status">Locating your district…</span><button id="boot-fallback">Use saved / demo district →</button></div>
 <div id="app" class="watching">
-<header class="titlebar"><div class="identity"><span class="brand-icon">M</span><strong>MUNICIPAL</strong><span class="version">TRAFFIC SYSTEMS / v0.7.1</span></div><div class="window-title"><span class="led"></span> DISTRICT CONTROL WORKSTATION</div><button class="square" id="fullscreen" title="Toggle fullscreen">⛶</button></header>
+<header class="titlebar"><div class="identity"><span class="brand-icon">M</span><strong>MUNICIPAL</strong><span class="version">TRAFFIC SYSTEMS / v0.7.2</span></div><div class="window-title"><span class="led"></span> DISTRICT CONTROL WORKSTATION</div><button class="square" id="fullscreen" title="Toggle fullscreen">⛶</button></header>
 <nav class="menubar"><div><button id="district-menu">District</button><button id="save-menu">Save plan</button><button id="report-menu">Test plan</button><button id="guide-menu">Field manual</button><button id="credits-menu">About</button></div><span>DEPARTMENT OF BETTER COMMUTES</span></nav>
 <div class="commandbar"><div class="location"><span class="location-symbol">⌖</span><div><small>ACTIVE DISTRICT / CHICAGO, IL</small><strong id="area-name">Wicker Park</strong></div><button class="change" id="change-area">Change district ↗</button></div><div class="scenario"><span class="amber-square"></span><div><small>SCENARIO 01</small><strong>The evening bottleneck</strong></div><span class="difficulty">LOCAL ASSIGNMENT</span></div><button id="run-test" class="primary">▶ Test your plan <kbd>R</kbd></button></div>
 <div class="workspace">
@@ -35,5 +35,6 @@
 <footer class="statusbar"><span><i class="led"></i> SIMULATION RUNNING <span class="status-sep">│</span> <span id="data-status">OSM GEOMETRY + MODELED TRIPS</span></span><span>WASD move · QE rotate · ZX zoom · Tab / IJKL select · M district · H keys <span class="status-sep">│</span> WEBGL</span><div id="toast" role="status"></div></footer>
 </div>
 <dialog id="modal"><div class="dialog-title"><span id="dialog-title">Field manual</span><button id="close-dialog" aria-label="Close dialog">×</button></div><div id="dialog-content"></div></dialog>
+<script type="module" src="./src/early-location.js"></script>
 <script type="module" src="./src/main.js"></script>
 </body></html>

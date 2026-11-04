@@ -7,5 +7,5 @@ const {createHash}=await import('node:crypto'),files=(await readdir('src')).filt
 for(const file of files)hash.update(await readFile(`src/${file}`));
 const version=hash.digest('hex').slice(0,12);
 for(const file of files.filter(f=>f.endsWith('.js'))){const path=`dist/src/${file}`,source=await readFile(path,'utf8');await writeFile(path,source.replace(/((?:from\s*|import\s*\()\s*['"])(\.{1,2}\/[^'"]+\.js)(['"])/g,`$1$2?v=${version}$3`));}
-const html=await readFile('dist/index.html','utf8');await writeFile('dist/index.html',html.replace('./src/main.js',`./src/main.js?v=${version}`).replace('./src/style.css',`./src/style.css?v=${version}`));
+const html=await readFile('dist/index.html','utf8');await writeFile('dist/index.html',html.replace('./src/early-location.js',`./src/early-location.js?v=${version}`).replace('./src/main.js',`./src/main.js?v=${version}`).replace('./src/style.css',`./src/style.css?v=${version}`));
 console.log(`Built self-contained WebGL game to dist/ (${version})`);

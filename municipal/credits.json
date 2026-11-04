@@ -154,7 +154,7 @@
       "runtimeResources": [
         "https://api.openstreetmap.org/api/0.6/map.json?bbox={west},{south},{east},{north}"
       ],
-      "modifications": "Bounded tiles are merged by original OSM ID, clipped to the requested district and transformed into a simplified road graph and original procedural city geometry. Optional browser geolocation centers a 1.8 km district on a fresh fix at startup; manual district selection remains available. Live colors, signals, vehicle demand and traffic behavior are modeled. Individual runtime extract hashes and map revision vary and are unknown; no additional extract is bundled.",
+      "modifications": "Bounded tiles are merged by original OSM ID, clipped to the requested district and transformed into a simplified road graph and original procedural city geometry. Optional browser geolocation starts during engine loading and centers a 1.8 km district on a fresh fix at startup. Two map tiles load concurrently with deterministic merging. A previously imported nearby map is cached locally for up to 24 hours and reused only after a fresh fix within 50 m of its stored center, retaining that center and boundary. Manual district selection remains available. Live colors, signals, vehicle demand and traffic behavior are modeled. Individual runtime extract hashes and map revision vary and are unknown; no additional extract is bundled.",
       "evidence": [
         "licenses/DATA-PROVENANCE.md"
       ],
