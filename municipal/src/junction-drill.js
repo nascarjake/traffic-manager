@@ -24,3 +24,12 @@ export function createJunctionDrill(world,plans,node,{count=30,mix='mixed'}={}){
 export function drillResult(sim){const m=sim.metrics(),cleared=m.completed,total=sim.drill.count,finished=cleared===total||sim.time>=sim.drill.duration;
  return{finished,cleared,total,remaining:Math.max(0,sim.drill.duration-sim.time),delay:m.delay,waiting:sim.cars.filter(c=>c.speed<.7).length+sim.pendingTrips.length,medal:!finished?null:cleared===total&&sim.time<=120?'gold':cleared>=total*.8?'silver':'retry'};
 }
+// Geometry belongs to a comparison's identity; timing is intentionally allowed to differ.
+export function drillKey(node,count,mix){return JSON.stringify([node.id,count,mix,node.edges.map(e=>[e.id,e.lanes,!!e.turnBay,Math.round(e.length)]).sort((a,b)=>a[0]-b[0])]);}
+export function drillComparison(result,previous){
+ if(!previous)return 'First completed run. Retune and replay this same wave to compare.';
+ const prefix=result.modified||previous.modified?'Live-edited run · exploratory comparison. ':'';
+ const all=result.cleared===result.total&&previous.cleared===previous.total;
+ const time=all?`${Math.abs(previous.time-result.time).toFixed(1)}s ${result.time<=previous.time?'faster':'slower'} to clear all · `:'';
+ return prefix+time+`${result.cleared-previous.cleared>=0?'+':''}${result.cleared-previous.cleared} cleared · ${Math.abs(previous.delay-result.delay).toFixed(1)}s ${result.delay<=previous.delay?'less':'more'} delay vs previous run.`;
+}
